@@ -24,6 +24,27 @@ import html from "highlight.js/lib/languages/xml";
 // load all languages with "all" or common languages with "common"
 import { all, createLowlight } from "lowlight";
 
+import {
+  IconH1,
+  IconH2,
+  IconH3,
+  IconBold,
+  IconItalic,
+  IconStrikethrough,
+  IconPilcrowRight,
+  IconCodeDots,
+  IconCode,
+  IconList,
+  IconListNumbers,
+  IconArrowsHorizontal,
+  IconBaselineDensityLarge,
+  IconArrowBackUp,
+  IconArrowForwardUp,
+  IconAccessible,
+  IconPhotoScan,
+  IconBrandYoutubeFilled,
+} from "@tabler/icons-react";
+
 const lowlight = createLowlight(all);
 
 lowlight.register("html", html);
@@ -88,7 +109,7 @@ const MenuBar = () => {
             editor.isActive("heading", { level: 1 }) ? "is-active" : ""
           }
         >
-          H1
+          <IconH1 />
         </ButtonBase>
         <ButtonBase
           onClick={() =>
@@ -98,7 +119,7 @@ const MenuBar = () => {
             editor.isActive("heading", { level: 2 }) ? "is-active" : ""
           }
         >
-          H2
+          <IconH2 />
         </ButtonBase>
         <ButtonBase
           onClick={() =>
@@ -108,58 +129,58 @@ const MenuBar = () => {
             editor.isActive("heading", { level: 3 }) ? "is-active" : ""
           }
         >
-          H3
+          <IconH3 />
         </ButtonBase>
         <ButtonBase
           onClick={() => editor.chain().focus().toggleBold().run()}
           disabled={!editor.can().chain().focus().toggleBold().run()}
           isActive={editor.isActive("bold")}
         >
-          Bold
+          <IconBold />
         </ButtonBase>
         <ButtonBase
           onClick={() => editor.chain().focus().toggleItalic().run()}
           disabled={!editor.can().chain().focus().toggleItalic().run()}
           isActive={editor.isActive("italic")}
         >
-          Italic
+          <IconItalic />
         </ButtonBase>
         <ButtonBase
           onClick={() => editor.chain().focus().toggleStrike().run()}
           disabled={!editor.can().chain().focus().toggleStrike().run()}
           isActive={editor.isActive("strike")}
         >
-          Strike
+          <IconStrikethrough />
         </ButtonBase>
         <ButtonBase
           onClick={() => editor.chain().focus().setParagraph().run()}
           isActive={editor.isActive("paragraph")}
         >
-          Paragraph
+          <IconPilcrowRight />
         </ButtonBase>
         <ButtonBase
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
           className={editor.isActive("codeBlock") ? "is-active" : ""}
         >
-          Toggle code block
+          <IconCodeDots />
         </ButtonBase>
         <ButtonBase
           onClick={() => editor.chain().focus().setCodeBlock().run()}
           disabled={editor.isActive("codeBlock")}
         >
-          Set code block
+          <IconCode />
         </ButtonBase>
         <ButtonBase
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           className={editor.isActive("bulletList") ? "is-active" : ""}
         >
-          Toggle bullet list
+          <IconList />
         </ButtonBase>
         <ButtonBase
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           className={editor.isActive("orderedList") ? "is-active" : ""}
         >
-          Toggle ordered list
+          <IconListNumbers />
         </ButtonBase>
         <ButtonBase
           onClick={() => editor.chain().focus().splitListItem("listItem").run()}
@@ -182,33 +203,35 @@ const MenuBar = () => {
         <ButtonBase
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
         >
-          Horizontal Rule
+          <IconArrowForwardUp />
         </ButtonBase>
         <ButtonBase onClick={() => editor.chain().focus().setHardBreak().run()}>
-          Hard Break
+          <IconBaselineDensityLarge />
         </ButtonBase>
         <ButtonBase
           onClick={() => editor.chain().focus().undo().run()}
           disabled={!editor.can().chain().focus().undo().run()}
         >
-          Undo
+          <IconArrowBackUp />
         </ButtonBase>
         <ButtonBase
           onClick={() => editor.chain().focus().redo().run()}
           disabled={!editor.can().chain().focus().redo().run()}
         >
-          Redo
+          <IconArrowForwardUp />
         </ButtonBase>
         <ButtonBase
           onClick={() => editor.chain().focus().setColor("#958DF1").run()}
           isActive={editor.isActive("textStyle", { color: "#958DF1" })}
         >
-          Purple
+          <IconAccessible />
         </ButtonBase>
-        <ButtonBase onClick={addImage}>Set image</ButtonBase>
+        <ButtonBase onClick={addImage}>
+          <IconPhotoScan />
+        </ButtonBase>
 
         <ButtonBase id="add" onClick={addYoutubeVideo}>
-          Add YouTube video
+          <IconBrandYoutubeFilled />
         </ButtonBase>
 
         <input
