@@ -105,10 +105,36 @@ const MenuBar = () => {
     editor?.commands.clearContent();
   };
 
-  const handleSubmit = () => {
+  // const handleSubmit = () => {
+  //   const content = editor.getHTML();
+  //   console.log(content);
+  // };
+
+  const handleSubmit = useCallback(() => {
+    if (!editor) return;
+
+    // Get the editor's HTML content
     const content = editor.getHTML();
-    console.log(content);
-  };
+
+    // Extract the first h1 tag content as the title
+    const titleMatch = content.match(/<h1>(.*?)<\/h1>/);
+    const title = titleMatch ? titleMatch[1].trim() : "Untitled Post";
+
+    // Remove the h1 tag from the content
+    const contentWithoutTitle = content.replace(/<h1>.*?<\/h1>/, "").trim();
+
+    // Prepare the data to send to backend
+    const blogData = {
+      title: title,
+      content: contentWithoutTitle,
+      // You would typically get the author from your auth context
+      // author: currentUser.id
+    };
+
+    console.log("Blog data to send:", blogData);
+    // Here you would typically make your API call:
+    // await axios.post('/api/posts', blogData);
+  }, [editor]);
 
   return (
     <div className="bg-black bg-opacity-90 backdrop-blur-sm shadow-lg rounded-lg p-4 mb-4 sticky top-0 z-10 border border-gray-100">
@@ -246,7 +272,40 @@ const MenuBar = () => {
           <IconPhotoPlus />
         </ButtonBase>
 
-        <div className="bg-gray-700 flex w-full items-center p-2 rounded-lg justify-center">
+        <div className="hidden max-md:flex justify-between space-x-2">
+          <div>
+            <ButtonBase id="add" onClick={addYoutubeVideo}>
+              <IconBrandYoutubeFilled />
+            </ButtonBase>
+          </div>
+          <div>
+            <input
+              id="width"
+              type="number"
+              min="320"
+              max="1024"
+              placeholder="width"
+              value={width}
+              onChange={(event) => setWidth(event.target.value)}
+              className="w-24 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            />
+          </div>
+
+          <div>
+            <input
+              id="height"
+              type="number"
+              min="180"
+              max="720"
+              placeholder="height"
+              value={height}
+              onChange={(event) => setHeight(event.target.value)}
+              className="w-24 px-3 py-2 ml-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            />
+          </div>
+        </div>
+
+        <div className="bg-gray-700 max-md:hidden flex w-full items-center p-2 rounded-lg justify-center">
           <p className="text-white mr-4 text-lg text-bold">
             Youtube Integration Section
           </p>
@@ -321,34 +380,36 @@ const extensions = [
   StarterKit,
 ];
 
-const content = `
-<h1>
-  Hi there,
+const content = `<h1>
+  My Awesome Blog Post
 </h1>
 <p>
-  this is a <em>basic</em> example of <strong>Tiptap</strong>. Sure, there are all kind of basic text styles you'd probably expect from a text editor. But wait until you see the lists:
+  Start writing your amazing blog post here. You can use various formatting options like <em>italic</em>, 
+  <strong>bold</strong>, and much more!
 </p>
+<h2>
+  Introduction
+</h2>
+<p>
+  Write an engaging introduction to hook your readers...
+</p>
+<h2>
+  Main Content
+</h2>
 <ul>
   <li>
-    That's a bullet list with one …
+    Your first important point
   </li>
   <li>
-    … or two list items.
+    Another crucial insight
   </li>
 </ul>
+<h2>
+  Conclusion
+</h2>
 <p>
-  Isn't that great? And all of that is editable. But wait, there's more. Let's try a code block: </p>
-<pre><code class="language-css">body {
-  display: none;
-}</code></pre>
-<p>
-  I know, I know, this is impressive. It's only the tip of the iceberg though. Give it a try and click a little bit around. Don't forget to check the other examples too.
+  Wrap up your thoughts and leave your readers with something to think about.
 </p>
-<blockquote>
-  Wow, that's amazing. Good work, boy! 👏
-  <br />
-  — Mom
-</blockquote>
 `;
 
 const TipTapEditor = () => {
