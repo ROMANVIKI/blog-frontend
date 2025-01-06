@@ -1,26 +1,102 @@
 "use client";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import axios from "axios";
 
 // Backend validation function
 const checkExistingUser = async (email) => {
   try {
-    const response = await fetch("/api/check-user", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
-    const data = await response.json();
-    return data.exists;
+    const response = await axios.post(
+      "http://localhost:8000/api/check-email/",
+      { email },
+    );
+    return response.data.exists;
   } catch (error) {
     console.error("Validation error:", error);
-    return false;
+    throw new Error("Failed to check email existence");
+  }
+};
+
+const checkExistingUserName = async (username) => {
+  try {
+    const res = await axios.post("http://localhost:8000/api/check-username/", {
+      username,
+    });
+    console.log(`API Response: ${res.data.exists}`);
+    return res.data.exists;
+  } catch (error) {
+    console.error("Validation error:", error);
+    throw new Error("Failed to check username existence");
+  }
+};
+
+// Submit form function
+const submitForm = async (values) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:8000/api/create-user/",
+      values,
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error submitting form:", error);
+    throw error;
   }
 };
 
 const SignupForm = () => {
+  const [emailError, setEmailError] = useState("");
+  const [userNameError, setUserNameError] = useState("");
+
+  const handleEmailBlur = async (e) => {
+    const email = e.target.value;
+
+    // Check if the email field is empty
+    if (!email) {
+      setEmailError("Email is required");
+      return;
+    }
+
+    // Validate email format using regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setEmailError("Invalid email format");
+      return;
+    }
+
+    // If the email format is valid, proceed to check with the database
+    try {
+      const exists = await checkExistingUser(email);
+      if (exists) {
+        setEmailError("Email already exists");
+      } else {
+        setEmailError(""); // No error
+      }
+    } catch (error) {
+      setEmailError("Failed to validate email");
+    }
+  };
+
+  const handleUserNameBlur = async (e) => {
+    const username = e.target.value;
+    if (!username) {
+      setUserNameError("Username is required");
+      return;
+    }
+    try {
+      const exists = await checkExistingUserName(username);
+      if (exists) {
+        setUserNameError("Usrename already exists");
+      } else {
+        setUserNameError("");
+      }
+    } catch (error) {
+      setUserNameError("Failed to validate the username from the server");
+    }
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
@@ -29,27 +105,14 @@ const SignupForm = () => {
         </h2>
         <Formik
           initialValues={{
-            firstName: "",
-            lastName: "",
+            userName: "",
             email: "",
             password: "",
-            confirmPassword: "",
           }}
           validationSchema={Yup.object({
-            firstName: Yup.string()
-              .max(15, "Must be 15 characters or less")
-              .required("Required"),
-            lastName: Yup.string()
-              .max(20, "Must be 20 characters or less")
-              .required("Required"),
-            email: Yup.string()
-              .email("Invalid email address")
-              .required("Required")
-              .test("unique-email", "Email already exists", async (value) => {
-                if (!value) return true;
-                const exists = await checkExistingUser(value);
-                return !exists;
-              }),
+            // userName: Yup.string()
+            //   .max(15, "Must be 15 characters or less")
+            //   .required("Required"),
             password: Yup.string()
               .min(8, "Password must be at least 8 characters")
               .matches(/[a-z]/, "Must contain at least one lowercase letter")
@@ -60,13 +123,9 @@ const SignupForm = () => {
                 "Must contain at least one special character",
               )
               .required("Password is required"),
-            confirmPassword: Yup.string()
-              .oneOf([Yup.ref("password"), null], "Passwords must match")
-              .required("Confirm Password is required"),
           })}
           onSubmit={async (values, { setSubmitting }) => {
             try {
-              // Your form submission logic here
               await submitForm(values);
             } catch (error) {
               console.error("Submission error:", error);
@@ -79,41 +138,23 @@ const SignupForm = () => {
             <Form className="space-y-4">
               <div>
                 <label
-                  htmlFor="firstName"
+                  htmlFor="userName"
                   className="block mb-2 text-sm font-medium text-gray-600"
                 >
-                  First Name
+                  User Name
                 </label>
                 <Field
-                  name="firstName"
-                  placeholder="Enter your first name"
+                  name="userName"
+                  placeholder="Enter Your User Name"
                   type="text"
                   className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  onBlur={handleUserNameBlur}
                 />
-                <ErrorMessage
-                  name="firstName"
-                  component="div"
-                  className="mt-1 text-sm text-red-500"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="lastName"
-                  className="block mb-2 text-sm font-medium text-gray-600"
-                >
-                  Last Name
-                </label>
-                <Field
-                  name="lastName"
-                  placeholder="Enter your last name"
-                  type="text"
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                />
-                <ErrorMessage
-                  name="lastName"
-                  component="div"
-                  className="mt-1 text-sm text-red-500"
-                />
+                {userNameError && (
+                  <div className="mt-1 text-sm text-red-500">
+                    {userNameError}
+                  </div>
+                )}
               </div>
               <div>
                 <label
@@ -127,14 +168,12 @@ const SignupForm = () => {
                   type="email"
                   placeholder="Enter your email"
                   className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  onBlur={handleEmailBlur}
                 />
-                <ErrorMessage
-                  name="email"
-                  component="div"
-                  className="mt-1 text-sm text-red-500"
-                />
+                {emailError && (
+                  <div className="mt-1 text-sm text-red-500">{emailError}</div>
+                )}
               </div>
-              {/* Password Field */}
               <div>
                 <label
                   className="block mb-2 text-sm font-medium text-gray-600"
@@ -151,29 +190,6 @@ const SignupForm = () => {
                 <ErrorMessage
                   name="password"
                   component="div"
-                  className="error"
-                  className="mt-1 text-sm text-red-500"
-                />
-              </div>
-
-              {/* Confirm Password Field */}
-              <div>
-                <label
-                  className="block mb-2 text-sm font-medium text-gray-600"
-                  htmlFor="confirmPassword"
-                >
-                  Confirm Password
-                </label>
-                <Field
-                  name="confirmPassword"
-                  type="password"
-                  placeholder="Confirm Password"
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                />
-                <ErrorMessage
-                  name="confirmPassword"
-                  component="div"
-                  className="error"
                   className="mt-1 text-sm text-red-500"
                 />
               </div>
