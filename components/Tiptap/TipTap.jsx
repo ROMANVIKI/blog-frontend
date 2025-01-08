@@ -1,6 +1,6 @@
 "use client";
 import "./styles.scss";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { Color } from "@tiptap/extension-color";
 import Heading from "@tiptap/extension-heading";
 import Image from "@tiptap/extension-image";
@@ -23,6 +23,7 @@ import ts from "highlight.js/lib/languages/typescript";
 import html from "highlight.js/lib/languages/xml";
 // load all languages with "all" or common languages with "common"
 import { all, createLowlight } from "lowlight";
+import axios from "axios";
 
 import {
   IconH1,
@@ -105,10 +106,24 @@ const MenuBar = () => {
     editor?.commands.clearContent();
   };
 
-  // const handleSubmit = () => {
-  //   const content = editor.getHTML();
-  //   console.log(content);
-  // };
+  const submitData = async ({ blogData }) => {
+    try {
+      console.log(blogData, "from the submit func");
+      const response = await axios.post(
+        "http://localhost:8000/api/create-blog/",
+        {
+          title: blogData.title,
+          content: blogData.content,
+          author: blogData.author,
+        },
+      );
+      alert("Submitted successfully");
+      return response;
+    } catch (e) {
+      console.error("Error submitting blog data:", e);
+      alert("An error occurred while submitting the blog.");
+    }
+  };
 
   const handleSubmit = useCallback(() => {
     if (!editor) return;
@@ -124,16 +139,15 @@ const MenuBar = () => {
     const contentWithoutTitle = content.replace(/<h1>.*?<\/h1>/, "").trim();
 
     // Prepare the data to send to backend
+
     const blogData = {
       title: title,
-      content: contentWithoutTitle,
-      // You would typically get the author from your auth context
-      // author: currentUser.id
+      author: 1,
+      content: content,
     };
 
+    submitData({ blogData });
     console.log("Blog data to send:", blogData);
-    // Here you would typically make your API call:
-    // await axios.post('/api/posts', blogData);
   }, [editor]);
 
   return (

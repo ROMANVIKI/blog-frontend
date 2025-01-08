@@ -3,6 +3,8 @@ import Link from "next/link";
 import React from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 
 // Backend validation function
 const checkExistingUser = async (email) => {
@@ -21,6 +23,7 @@ const checkExistingUser = async (email) => {
 };
 
 const LoginForm = () => {
+  const router = useRouter();
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
@@ -28,17 +31,32 @@ const LoginForm = () => {
           Login To Continue
         </h2>
         <Formik
-          initialValues={{ email: "", password: "" }}
+          initialValues={{ username: "", password: "" }}
           validationSchema={Yup.object({
-            email: Yup.string()
-              .email("Invalid email address")
-              .required("Required"),
+            username: Yup.string().required("Required"),
             password: Yup.string().required("Required"),
           })}
-          onSubmit={async (values, { setSubmitting }) => {
+          onSubmit={(values, { setSubmitting }) => {
             try {
+              axios
+                .post("http://localhost:8000/api/token/", {
+                  username: values.username,
+                  password: values.password,
+                })
+                .then((response) => {
+                  localStorage.setItem("accessToken", response.data.access);
+                  localStorage.setItem("refreshToken", response.data.refresh);
+                  console.log(response.data);
+                  alert("Token obtained successfully");
+                  setSubmitting(false);
+                  router.push("/create-blog");
+                })
+                .catch((error) => {
+                  alert(error);
+                  setSubmitting(false);
+                });
+
               // Your form submission logic here
-              await submitForm(values);
             } catch (error) {
               console.error("Submission error:", error);
             } finally {
@@ -50,19 +68,19 @@ const LoginForm = () => {
             <Form className="space-y-4">
               <div>
                 <label
-                  htmlFor="email"
+                  htmlFor="username"
                   className="block mb-2 text-sm font-medium text-gray-600"
                 >
-                  Email Address
+                  User Name
                 </label>
                 <Field
-                  name="email"
-                  type="email"
-                  placeholder="Enter Your Email"
+                  name="username"
+                  type="text"
+                  placeholder="Enter Your Username"
                   className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 />
                 <ErrorMessage
-                  name="email"
+                  name="username"
                   component="div"
                   className="mt-1 text-sm text-red-500"
                 />

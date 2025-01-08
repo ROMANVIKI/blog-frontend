@@ -81,7 +81,7 @@ const Footer = () => {
                 href="#"
                 className="hover:text-purple-400 transition-colors duration-300"
               >
-                Our Mission
+               About 
               </a>
             </li>
             <li>
@@ -89,7 +89,7 @@ const Footer = () => {
                 href="#"
                 className="hover:text-purple-400 transition-colors duration-300"
               >
-                Services
+                Blogs
               </a>
             </li>
             <li>

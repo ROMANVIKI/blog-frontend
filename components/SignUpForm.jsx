@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 // Backend validation function
 const checkExistingUser = async (email) => {
@@ -33,22 +34,32 @@ const checkExistingUserName = async (username) => {
 };
 
 // Submit form function
-const submitForm = async (values) => {
-  try {
-    const response = await axios.post(
-      "http://localhost:8000/api/create-user/",
-      values,
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error submitting form:", error);
-    throw error;
-  }
-};
 
 const SignupForm = () => {
+  const router = useRouter();
   const [emailError, setEmailError] = useState("");
   const [userNameError, setUserNameError] = useState("");
+
+
+    const submitForm = async (values) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/create-user/",
+        {
+          username: values.userName,
+          email: values.email,
+          password: values.password,
+        },
+      );
+      if (response.data) {
+        router.push("/login");
+      }
+      return response.data;
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      throw error;
+    }
+  };
 
   const handleEmailBlur = async (e) => {
     const email = e.target.value;
@@ -125,8 +136,9 @@ const SignupForm = () => {
               .required("Password is required"),
           })}
           onSubmit={async (values, { setSubmitting }) => {
+            console.log(values);
             try {
-              await submitForm(values);
+              await submitForm(values, router);
             } catch (error) {
               console.error("Submission error:", error);
             } finally {
