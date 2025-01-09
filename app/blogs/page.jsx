@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Heart, MessageCircleMore } from "lucide-react";
 import Link from "next/link";
 
 const Alert = ({ children, variant = "default", className = "" }) => {
@@ -87,6 +87,16 @@ const BlogViewer = () => {
               <h2 className="text-2xl font-semibold text-gray-800 mb-4 hover:text-blue-600 transition-colors duration-200">
                 {blog.title}
               </h2>
+              <div className="flex flex-row text-lg space-x-2 ">
+                <p>{blog.like_count}</p>
+                <div>
+                  <Heart />
+                </div>
+                <p>{blog.comment_count}</p>
+                <div>
+                  <MessageCircleMore />
+                </div>
+              </div>
 
               {/* <div className="prose prose-blue max-w-none"> */}
               {/*   <div */}
