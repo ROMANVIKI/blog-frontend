@@ -8,11 +8,23 @@ import {
 } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { logout } from "../../utils/auth";
+import { useAppState } from "../../context/StateContext";
 
 export const FloatingNav = ({ navItems, className }) => {
+  const { state, setState } = useAppState();
   const { scrollYProgress } = useScroll();
 
   const [visible, setVisible] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    setState((prev) => ({
+      ...prev,
+      isLoggedIn: false,
+      loggedUserName: "",
+    }));
+  };
 
   useMotionValueEvent(scrollYProgress, "change", (current) => {
     // Check if current is not undefined and is a number
@@ -62,10 +74,34 @@ export const FloatingNav = ({ navItems, className }) => {
             <span className="hidden sm:block text-sm">{navItem.name}</span>
           </Link>
         ))}
-        <button className="border text-sm font-medium relative border-neutral-200 border-white/[0.2]  text-white px-4 py-2 rounded-full">
-          <span>Login</span>
-          <span className="absolute inset-x-0 w-1/2 mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent  h-px" />
-        </button>
+        {state.isLoggedIn ? (
+          <div>
+            <button
+              onClick={handleLogout}
+              className="border text-sm font-medium relative border-neutral-500 border-white/[0.5]  text-white px-4 py-2 rounded-full"
+            >
+              <span>
+                <Link href="/blogs">{state.loggedUserName}</Link>
+              </span>
+              <span className="absolute inset-x-0 w-1/2 mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent  h-px" />
+            </button>
+
+            <button
+              onClick={handleLogout}
+              className="border text-sm font-medium relative border-neutral-200 border-white/[0.2]  text-white px-4 py-2 rounded-full"
+            >
+              <span>Logout</span>
+              <span className="absolute inset-x-0 w-1/2 mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent  h-px" />
+            </button>
+          </div>
+        ) : (
+          <button className="border text-sm font-medium relative border-neutral-200 border-white/[0.2]  text-white px-4 py-2 rounded-full">
+            <span>
+              <Link href="/login">Login</Link>
+            </span>
+            <span className="absolute inset-x-0 w-1/2 mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent  h-px" />
+          </button>
+        )}
       </motion.div>
     </AnimatePresence>
   );

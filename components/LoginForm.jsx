@@ -1,29 +1,16 @@
 "use client";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-
-// Backend validation function
-const checkExistingUser = async (email) => {
-  try {
-    const response = await fetch("/api/check-user", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
-    const data = await response.json();
-    return data.exists;
-  } catch (error) {
-    console.error("Validation error:", error);
-    return false;
-  }
-};
+import { useAppState } from "../context/StateContext";
 
 const LoginForm = () => {
   const router = useRouter();
+  const { state, setState } = useAppState();
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
@@ -46,10 +33,17 @@ const LoginForm = () => {
                 .then((response) => {
                   localStorage.setItem("accessToken", response.data.access);
                   localStorage.setItem("refreshToken", response.data.refresh);
+                  localStorage.setItem("isLogged", true);
+                  localStorage.setItem("userName", values.username);
+                  setState((prev) => ({
+                    ...prev,
+                    isLoggedIn: true,
+                    loggedUserName: values.username,
+                  }));
                   console.log(response.data);
                   alert("Token obtained successfully");
                   setSubmitting(false);
-                  router.push("/create-blog");
+                  router.push("/blogs");
                 })
                 .catch((error) => {
                   alert(error);
