@@ -13,6 +13,7 @@ import {
   Bookmark,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const DetailedBlogComp = ({ params: paramsPromise }) => {
   const [params, setParams] = useState(null);
@@ -112,11 +113,17 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
         <div className="bg-white shadow-lg border rounded-lg overflow-hidden">
           <div className="p-6 border-b">
             <div className="flex items-center space-x-4 text-gray-600">
-              <User className="w-5 h-5" />
+              <Image
+                width={50}
+                height={50}
+                src={blogData.author_avatar}
+                alt="author profile picture"
+                className="rounded-full"
+              />
               <p className="text-lg">
                 Author:{" "}
                 <span className="text-gray-800 font-large">
-                  {blogData.author === 1 ? "romanviki" : "Admin"}
+                  {blogData.author_name}
                 </span>
               </p>
               <Calendar className="w-5 h-5" />

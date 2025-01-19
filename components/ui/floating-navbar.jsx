@@ -76,12 +76,9 @@ export const FloatingNav = ({ navItems, className }) => {
         ))}
         {state.isLoggedIn ? (
           <div>
-            <button
-              onClick={handleLogout}
-              className="border text-sm font-medium relative border-neutral-500 border-white/[0.5]  text-white px-4 py-2 rounded-full"
-            >
+            <button className="border text-sm font-medium relative border-neutral-500 border-white/[0.5]  text-white px-4 py-2 rounded-full">
               <span>
-                <Link href="/blogs">{state.loggedUserName}</Link>
+                <Link href="/profile">{state.loggedUserName}</Link>
               </span>
               <span className="absolute inset-x-0 w-1/2 mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent  h-px" />
             </button>

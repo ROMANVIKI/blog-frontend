@@ -7,8 +7,8 @@ export function StateProvider({ children }) {
   const localUserName = localStorage.getItem("userName");
   const localIsLogged = localStorage.getItem("isLogged");
   const [state, setState] = useState({
-    isLoggedIn: localIsLogged ? true : false,
-    loggedUserName: localUserName ? localUserName : "",
+    isLoggedIn: localIsLogged || false,
+    loggedUserName: localUserName || "",
   });
 
   return (
