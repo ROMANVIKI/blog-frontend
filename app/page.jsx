@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import BackgroundLinesDemo from "../components/BackgroundLinesDemo";
 import FloatingNavDemo from "../components/FloatingNavDemo";
 import Footer from "../components/Footer";
-import SidebarDemo from "../components/SidebarDemo";
 import FeaturesSectionDemo from "../components/FeaturesSectionDemo";
 import Link from "next/link";
 

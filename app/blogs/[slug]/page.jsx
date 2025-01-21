@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useFetchUser } from "../../../components/useFetchUser";
 
 const DetailedBlogComp = ({ params: paramsPromise }) => {
   const [params, setParams] = useState(null);
@@ -21,6 +22,8 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
   const [loading, setLoading] = useState(true);
   const [isCommentSection, setIsCommentSection] = useState(false);
   const [newComment, setNewComment] = useState("");
+
+  const { user, error } = useFetchUser();
 
   const router = useRouter();
 
@@ -51,21 +54,37 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
 
     try {
       const response = await axios.post(
-        `http://localhost:8000/api/create-comment/`,
+        "http://localhost:8000/api/create-comment/",
         {
-          blog_id: 1,
+          blog: blogData.id,
           comment: newComment,
-          commented_by: 1,
+          commented_by: user.id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            "Content-Type": "application/json",
+          },
         },
       );
-      setBlogData((prev) => ({
-        ...prev,
-        comments: [...prev.comments, response.data], // Append the new comment
-      }));
-      setNewComment("");
+
+      if (response.data) {
+        setBlogData((prev) => ({
+          ...prev,
+          comments: [...prev.comments, response.data],
+        }));
+        setNewComment("");
+      }
     } catch (error) {
       console.error("Error submitting comment:", error);
-      alert("Failed to submit comment.");
+      // More detailed error handling
+      if (error.response) {
+        alert(
+          `Failed to submit comment: ${JSON.stringify(error.response.data)}`,
+        );
+      } else {
+        alert("Failed to submit comment. Please check your connection.");
+      }
     }
   };
 
@@ -116,7 +135,7 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
               <Image
                 width={50}
                 height={50}
-                src={blogData.author_avatar}
+                src={`http://localhost:8000${user.avatar}`}
                 alt="author profile picture"
                 className="rounded-full"
               />
@@ -146,7 +165,7 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
           <div className="p-6">
             <BlogViewer content={blogData.content} />
           </div>
-          <div className="border-2 justify-between flex flex-row border-gray-600 p-4">
+          <div className="border-2 justify-between flex flex-row border-gray-600 p-2">
             <div className="flex flex-row items-center space-x-2">
               <Heart width={30} height={30} />
               <p className="text-2xl">{blogData.like_count}</p>
@@ -156,6 +175,8 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
                 height={30}
                 className="cursor-pointer"
               />
+
+              <p className="text-2xl">{blogData.comment_count}</p>
             </div>
             <div>
               <Bookmark width={30} height={30} />
