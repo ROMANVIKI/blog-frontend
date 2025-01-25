@@ -15,6 +15,7 @@ import {
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useFetchUser } from "../../../components/useFetchUser";
+import Toast from "../../../components/ui/Toast";
 
 const DetailedBlogComp = ({ params: paramsPromise }) => {
   const [params, setParams] = useState(null);
@@ -22,6 +23,15 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
   const [loading, setLoading] = useState(true);
   const [isCommentSection, setIsCommentSection] = useState(false);
   const [newComment, setNewComment] = useState("");
+
+  const [heartIconCol, setHeartIconCol] = useState(false);
+  const [isBookmark, setIsBookmark] = useState(false);
+
+  const [isToast, setIsToast] = useState(false);
+  const [toastData, setToastData] = useState({
+    message: "",
+    textcol: "",
+  });
 
   const { user, error } = useFetchUser();
 
@@ -33,6 +43,36 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
 
   const navigateBack = () => {
     router.back();
+  };
+
+  const handleLikeBtn = () => {
+    setHeartIconCol((prev) => !prev);
+  };
+
+  const handleBookmark = () => {
+    setIsBookmark((prev) => !prev);
+    try {
+      const response = axios.post(
+        "http://localhost:8000/api/save-blog/",
+        {
+          saved_by: user.id,
+          saved_blog: blogData.id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      setToastData({
+        message: "Bookmarked SuccessFully!",
+        textcol: "text-green-500",
+      });
+      setIsToast(true);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const copyUrl = () => {
@@ -68,11 +108,18 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
         },
       );
 
+      setToastData({
+        message: "Comment Added SuccessFully!",
+        textcol: "text-gray-500",
+      });
+      setIsToast(true);
+
       if (response.data) {
         setBlogData((prev) => ({
           ...prev,
-          comments: [...prev.comments, response.data],
+          comments: [response.data, ...prev.comments],
         }));
+
         setNewComment("");
       }
     } catch (error) {
@@ -167,7 +214,13 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
           </div>
           <div className="border-2 justify-between flex flex-row border-gray-600 p-2">
             <div className="flex flex-row items-center space-x-2">
-              <Heart width={30} height={30} />
+              <Heart
+                width={30}
+                fill={heartIconCol ? "red" : "none"}
+                color={heartIconCol ? "red" : "black"}
+                onClick={handleLikeBtn}
+                height={30}
+              />
               <p className="text-2xl">{blogData.like_count}</p>
               <MessageCircle
                 onClick={toggleCommentSection}
@@ -179,7 +232,13 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
               <p className="text-2xl">{blogData.comment_count}</p>
             </div>
             <div>
-              <Bookmark width={30} height={30} />
+              <Bookmark
+                width={30}
+                height={30}
+                fill={isBookmark ? "black" : "none"}
+                color={isBookmark ? "black" : "black"}
+                onClick={handleBookmark}
+              />
             </div>
           </div>
 
@@ -222,6 +281,9 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
                 ))}
               </div>
             </div>
+          )}
+          {isToast && (
+            <Toast message={toastData.message} textcol={toastData.textcol} />
           )}
         </div>
       ) : (
