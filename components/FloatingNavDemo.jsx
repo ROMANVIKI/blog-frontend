@@ -19,6 +19,11 @@ export default function FloatingNavDemo() {
       link: "/blogs",
       icon: <IconMessage className="h-4 w-4 text-white" />,
     },
+    {
+      name: "Favourites",
+      link: "/favourites",
+      icon: <IconMessage className="h-4 w-4 text-white" />,
+    },
   ];
   return (
     <div className="relative  w-full">
