@@ -110,7 +110,7 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
 
       setToastData({
         message: "Comment Added SuccessFully!",
-        textcol: "text-gray-500",
+        textcol: "text-green-500",
       });
       setIsToast(true);
 
