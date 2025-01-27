@@ -2,10 +2,12 @@
 import { useRouter } from "next/navigation";
 import React from "react";
 import TipTap from "../../components/Tiptap/TipTap";
+import { useAppState } from "../../context/StateContext";
 
 const CreateBlog = () => {
   const router = useRouter();
-  const token = localStorage.getItem("accessToken");
+  const { state } = useAppState();
+  const token = state.AccessToken;
 
   if (!token) {
     router.push("/login");

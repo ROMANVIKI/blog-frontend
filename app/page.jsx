@@ -1,18 +1,15 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import BackgroundLinesDemo from "../components/BackgroundLinesDemo";
 import FloatingNavDemo from "../components/FloatingNavDemo";
 import Footer from "../components/Footer";
 import FeaturesSectionDemo from "../components/FeaturesSectionDemo";
 import Link from "next/link";
+import { useAppState } from "../context/StateContext"; // Import the custom hook
 
 const Home = () => {
-  const [isLogged, setIsLogged] = useState(false);
-
-  useEffect(() => {
-    const localIsLogged = localStorage.getItem("isLogged");
-    setIsLogged(localIsLogged === "true"); // Adjust the condition as per your storage logic
-  }, []);
+  const { state } = useAppState();
+  const isLogged = state.isLoggedIn; // Get the login state from context
 
   return (
     <div>
