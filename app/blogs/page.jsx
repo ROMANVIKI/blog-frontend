@@ -1,9 +1,9 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { Loader2, Heart, MessageCircleMore } from "lucide-react";
 import Link from "next/link";
 
-const Alert = ({ children, variant = "default", className = "" }) => {
+const Alert = React.memo(({ children, variant = "default", className = "" }) => {
   const baseStyles = "rounded-lg border p-4";
   const variants = {
     default: "bg-gray-50 border-gray-200 text-gray-800",
@@ -17,39 +17,85 @@ const Alert = ({ children, variant = "default", className = "" }) => {
       {children}
     </div>
   );
-};
+});
 
-const AlertTitle = ({ children, className = "" }) => {
+const AlertTitle = React.memo(({ children, className = "" }) => {
   return <h5 className={`font-medium mb-1 ${className}`}>{children}</h5>;
-};
+});
 
-const AlertDescription = ({ children, className = "" }) => {
+const AlertDescription = React.memo(({ children, className = "" }) => {
   return <div className={`text-sm ${className}`}>{children}</div>;
-};
+});
 
-const BlogViewer = () => {
+const BlogViewer = React.memo(() => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchBlogs = async () => {
-      try {
-        const response = await fetch("http://localhost:8000/api/blogs/");
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const data = await response.json();
-        setBlogs(data);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
+  const fetchBlogs = useCallback(async () => {
+    try {
+      const response = await fetch("http://localhost:8000/api/blogs/");
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
-    };
-    fetchBlogs();
+      const data = await response.json();
+      setBlogs(data);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchBlogs();
+  }, [fetchBlogs]);
+
+  const renderedBlogs = useMemo(() => {
+    return blogs.map((blog) => (
+      <article
+        key={blog.id}
+        className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
+      >
+        <div className="p-6">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4 hover:text-blue-600 transition-colors duration-200">
+            {blog.title}
+          </h2>
+          <div className="flex flex-row text-lg space-x-2 ">
+            <p>{blog.like_count}</p>
+            <div>
+              <Heart />
+            </div>
+            <p>{blog.comment_count}</p>
+            <div>
+              <MessageCircleMore />
+            </div>
+          </div>
+
+          <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <time
+              className="text-sm text-gray-500"
+              dateTime={blog.created_at}
+            >
+              Posted on{" "}
+              {new Date(blog.created_at).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </time>
+
+            <Link
+              href={`/blogs/${blog.slug}`}
+              className="inline-flex items-center justify-center px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-200 w-full sm:w-auto"
+            >
+              Read
+            </Link>
+          </div>
+        </div>
+      </article>
+    ));
+  }, [blogs]);
 
   if (loading) {
     return (
@@ -78,59 +124,10 @@ const BlogViewer = () => {
       </h1>
 
       <div className="space-y-8">
-        {blogs.map((blog) => (
-          <article
-            key={blog.id}
-            className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
-          >
-            <div className="p-6">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-4 hover:text-blue-600 transition-colors duration-200">
-                {blog.title}
-              </h2>
-              <div className="flex flex-row text-lg space-x-2 ">
-                <p>{blog.like_count}</p>
-                <div>
-                  <Heart />
-                </div>
-                <p>{blog.comment_count}</p>
-                <div>
-                  <MessageCircleMore />
-                </div>
-              </div>
-
-              {/* <div className="prose prose-blue max-w-none"> */}
-              {/*   <div */}
-              {/*     className="text-gray-600" */}
-              {/*     dangerouslySetInnerHTML={{ __html: blog.content }} */}
-              {/*   /> */}
-              {/* </div> */}
-
-              <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <time
-                  className="text-sm text-gray-500"
-                  dateTime={blog.created_at}
-                >
-                  Posted on{" "}
-                  {new Date(blog.created_at).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </time>
-
-                <Link
-                  href={`/blogs/${blog.slug}`}
-                  className="inline-flex items-center justify-center px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-200 w-full sm:w-auto"
-                >
-                  Read
-                </Link>
-              </div>
-            </div>
-          </article>
-        ))}
+        {renderedBlogs}
       </div>
     </div>
   );
-};
+});
 
 export default BlogViewer;

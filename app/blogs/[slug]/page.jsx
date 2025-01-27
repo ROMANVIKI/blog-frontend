@@ -193,8 +193,8 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
                 </span>
               </p>
               <Calendar className="w-5 h-5" />
+              Published:{" "}
               <p className="text-lg">
-                Published:{" "}
                 <span className="text-gray-800 font-large">
                   {blogData.created_at
                     ? new Date(blogData.created_at).toLocaleDateString()
