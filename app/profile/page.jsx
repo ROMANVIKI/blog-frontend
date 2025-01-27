@@ -3,10 +3,12 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import ProfileForm from "../../components/ProfileForm";
 import axios from "axios";
+import { useAppState } from "../../context/StateContext";
 
 const ProfileComp = () => {
   const router = useRouter();
-  const token = localStorage.getItem("accessToken");
+  const { state } = useAppState();
+  const token = state.AccessToken;
 
   if (!token) {
     router.push("/login");
