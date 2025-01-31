@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useFetchUser } from "../../../components/useFetchUser";
 import Toast from "../../../components/ui/Toast";
+import { useAppState } from "../../../context/StateContext";
 
 const DetailedBlogComp = ({ params: paramsPromise }) => {
   const [params, setParams] = useState(null);
@@ -35,7 +36,13 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
 
   const { user, error } = useFetchUser();
 
+  const userId = localStorage.getItem("userId");
+
   const router = useRouter();
+
+  const { state } = useAppState();
+
+  const token = state.AccessToken;
 
   const toggleCommentSection = () => {
     setIsCommentSection((prev) => !prev);
@@ -45,33 +52,112 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
     router.back();
   };
 
-  const handleLikeBtn = () => {
-    setHeartIconCol((prev) => !prev);
+  const getLikeId = () => {
+    const like = blogData.likes.find(
+      (item) => item.liked_by === userId || item.liked_by === user.id,
+    );
+    return like ? like.id : null;
   };
 
-  const handleBookmark = () => {
-    setIsBookmark((prev) => !prev);
-    try {
-      const response = axios.post(
-        "http://localhost:8000/api/save-blog/",
-        {
-          saved_by: user.id,
-          saved_blog: blogData.id,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-            "Content-Type": "application/json",
-          },
-        },
-      );
+  const handleLikeBtn = async () => {
+    if (!token) {
       setToastData({
-        message: "Bookmarked SuccessFully!",
-        textcol: "text-green-500",
+        message: "Login to like!",
+        textcol: "text-red-500",
       });
       setIsToast(true);
-    } catch (error) {
-      console.log(error);
+    }
+    if (token) {
+      if (heartIconCol) {
+        try {
+          const likeId = getLikeId();
+          const response = await axios.delete(
+            `http://localhost:8000/api/dl-like/${likeId}/`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            },
+          );
+          setToastData({
+            message: "You unliked the blog!!",
+            textcol: "text-red-800",
+          });
+          setIsToast(true);
+          setBlogData((prev) => ({
+            ...prev,
+            like_count: prev.like_count - 1,
+          }));
+          setHeartIconCol((prev) => !prev);
+        } catch (e) {
+          alert(e);
+        }
+      }
+      if (!heartIconCol) {
+        try {
+          const response = await axios.post(
+            `http://localhost:8000/api/like/`,
+            {
+              liked_by: user ? user.id : userId,
+              blog: blogData.id,
+            },
+
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            },
+          );
+          setBlogData((prev) => ({
+            ...prev,
+            like_count: prev.like_count + 1,
+          }));
+
+          setToastData({
+            message: "You liked the blog!!",
+            textcol: "text-blue-500",
+          });
+          setIsToast(true);
+
+          setHeartIconCol((prev) => !prev);
+        } catch (e) {
+          alert(e);
+        }
+      }
+    }
+  };
+
+  const handleBookmark = async () => {
+    if (!token) {
+      setToastData({
+        message: "Login to save the blog!",
+        textcol: "text-red-500",
+      });
+      setIsToast(true);
+    } else {
+      try {
+        const response = await axios.post(
+          "http://localhost:8000/api/save-blog/",
+          {
+            saved_by: user.id,
+            saved_blog: blogData.id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          },
+        );
+        setToastData({
+          message: "Bookmarked SuccessFully!",
+          textcol: "text-green-500",
+        });
+        setIsToast(true);
+        setIsBookmark((prev) => !prev);
+      } catch (error) {
+        alert(error);
+      }
     }
   };
 
@@ -87,8 +173,20 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
   };
 
   const handleCommentSubmit = async () => {
+    if (!token) {
+      setToastData({
+        message: "Login to comment",
+        textcol: "text-red-500",
+      });
+      setIsToast(true);
+    }
     if (!newComment.trim()) {
-      alert("Comment cannot be empty.");
+      setToastData({
+        message: "Comment cannot be empty",
+        textcol: "text-red-500",
+      });
+      setIsToast(true);
+
       return;
     }
 
@@ -102,7 +200,7 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
         },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         },
@@ -123,7 +221,7 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
         setNewComment("");
       }
     } catch (error) {
-      console.error("Error submitting comment:", error);
+      alert(error);
       // More detailed error handling
       if (error.response) {
         alert(
@@ -147,16 +245,37 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
   useEffect(() => {
     const fetchBlogData = async () => {
       if (params?.slug) {
-        try {
-          const response = await axios.get(
-            `http://localhost:8000/api/blog/${params.slug}`,
-          );
-          console.log(response.data);
-          setBlogData(response.data);
-          setLoading(false);
-        } catch (error) {
-          console.error("Error fetching blog data:", error);
-          alert("Failed to load blog data.");
+        if (token) {
+          try {
+            const response = await axios.get(
+              `http://localhost:8000/api/blog/${params.slug}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              },
+            );
+            console.log(response.data);
+            setBlogData(response.data);
+            setIsBookmark(response.data.is_saved);
+            setHeartIconCol(response.data.is_liked);
+            setLoading(false);
+          } catch (error) {
+            alert("Failed to load blog data.");
+          }
+        }
+        if (!token) {
+          try {
+            const response = await axios.get(
+              `http://localhost:8000/api/blog-fnu/${params.slug}`,
+            );
+            setBlogData(response.data);
+            setIsBookmark(response.data.is_saved);
+            setHeartIconCol(response.data.is_liked);
+            setLoading(false);
+          } catch (error) {
+            alert("Failed to load blog data.");
+          }
         }
       }
     };
@@ -182,18 +301,18 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
               <Image
                 width={50}
                 height={50}
-                src={`http://localhost:8000${user.avatar}`}
+                src={blogData.author_avatar}
                 alt="author profile picture"
                 className="rounded-full"
               />
               <p className="text-lg">
-                Author:{" "}
+                {/* Author:{" "} */}
                 <span className="text-gray-800 font-large">
                   {blogData.author_name}
                 </span>
               </p>
               <Calendar className="w-5 h-5" />
-              Published:{" "}
+              {/* Published:{" "} */}
               <p className="text-lg">
                 <span className="text-gray-800 font-large">
                   {blogData.created_at
@@ -202,10 +321,10 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
                 </span>
               </p>
               <div>
-                <Share2 onClick={copyUrl} />
+                <Share2 disabled={!token} onClick={copyUrl} />
               </div>
               <div>
-                <CircleArrowLeft onClick={navigateBack} />
+                <CircleArrowLeft disabled={!token} onClick={navigateBack} />
               </div>
             </div>
           </div>
@@ -216,8 +335,9 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
             <div className="flex flex-row items-center space-x-2">
               <Heart
                 width={30}
+                disabled={!token}
                 fill={heartIconCol ? "red" : "none"}
-                color={heartIconCol ? "red" : "black"}
+                color={heartIconCol ? "red" : "gray"}
                 onClick={handleLikeBtn}
                 height={30}
               />
@@ -233,10 +353,11 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
             </div>
             <div>
               <Bookmark
+                disabled={!token}
                 width={30}
                 height={30}
-                fill={isBookmark ? "black" : "none"}
-                color={isBookmark ? "black" : "black"}
+                fill={isBookmark ? "gray" : "none"}
+                color="gray"
                 onClick={handleBookmark}
               />
             </div>
@@ -254,6 +375,7 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
                   onChange={(e) => setNewComment(e.target.value)}
                 />
                 <button
+                  disabled={!token}
                   className="bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600"
                   onClick={handleCommentSubmit}
                 >
@@ -283,7 +405,12 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
             </div>
           )}
           {isToast && (
-            <Toast message={toastData.message} textcol={toastData.textcol} />
+            <Toast
+              setIsToast={setIsToast}
+              message={toastData.message}
+              isToast={isToast}
+              textcol={toastData.textcol}
+            />
           )}
         </div>
       ) : (

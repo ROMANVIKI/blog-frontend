@@ -1,9 +1,16 @@
 "use client";
-import { createContext, useContext, useState, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+  memo,
+} from "react";
 
 const StateContext = createContext(null);
 
-export function StateProvider({ children }) {
+export const StateProvider = memo(({ children }) => {
   const [state, setState] = useState({
     isLoggedIn: false,
     loggedUserName: "",
@@ -22,14 +29,16 @@ export function StateProvider({ children }) {
     });
   }, []);
 
+  // Memoize the context value to prevent unnecessary re-renders
+  const contextValue = useMemo(() => ({ state, setState }), [state]);
+
   return (
-    <StateContext.Provider value={{ state, setState }}>
+    <StateContext.Provider value={contextValue}>
       {children}
     </StateContext.Provider>
   );
-}
+});
 
-// Custom hook to access the context
 export function useAppState() {
   const context = useContext(StateContext);
   if (!context) {

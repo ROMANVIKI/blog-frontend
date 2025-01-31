@@ -10,14 +10,22 @@ import {
   CircleArrowLeft,
 } from "lucide-react";
 import { useRouter } from "next/navigation"; // Import useRouter for navigation
+import { useAppState } from "../../context/StateContext";
 
 function Favourites() {
   const [savedBlogData, setSavedBlogData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter(); // Initialize useRouter
 
+  const { state } = useAppState();
+  const token = state.AccessToken;
+
   const navigateBack = () => {
     router.back(); // Navigate back to the previous page
+  };
+
+  const navigateToBlogs = () => {
+    router.push("/blogs");
   };
 
   useEffect(() => {
@@ -42,19 +50,49 @@ function Favourites() {
     fetchSavedBlogs();
   }, []);
 
-  const handleAdd = (blogId) => {
-    alert(`Add icon clicked for blog ID: ${blogId}`);
-  };
+  // const handleAdd = (blogId) => {
+  //   alert(`Add icon clicked for blog ID: ${blogId}`);
+  // };
 
   const handleRemove = (blogId) => {
     alert(`Remove icon clicked for blog ID: ${blogId}`);
+    const deleteSavedBlog = async () => {
+      try {
+        const response = await axios.delete(
+          `http://localhost:8000/api/dl-saved-blog/${blogId}/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+        alert("deleted");
+      } catch (error) {
+        alert(error);
+      }
+    };
+    deleteSavedBlog();
   };
 
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] p-4">
         <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
-        <p className="mt-4 text-gray-600">Loading blogs...</p>
+        <p className="mt-4 text-gray-600">Loading saved blogs...</p>
+      </div>
+    );
+  }
+
+  if (savedBlogData.length === 0) {
+    return (
+      <p className="text-2xl font-semibold text-gray-600">No Blogs Saved</p>
+      <div className="flex flex-col items-center justify-center min-h-screen text-center">
+        <button
+          onClick={navigateToBlogs}
+          className="mt-4 px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition"
+        >
+          Go To Blogs
+        </button>
       </div>
     );
   }
@@ -93,14 +131,13 @@ function Favourites() {
             <div className="flex justify-end items-center gap-4 mt-6">
               <ExternalLink
                 className="w-6 h-6 text-blue-500 cursor-pointer hover:scale-110 transition-transform"
-                onClick={() => handleAdd(blog.id)}
                 title="View Details"
               />
-              <PlusCircle
-                className="w-6 h-6 text-green-500 cursor-pointer hover:scale-110 transition-transform"
-                onClick={() => handleAdd(blog.id)}
-                title="Add"
-              />
+              {/* <PlusCircle */}
+              {/*   className="w-6 h-6 text-green-500 cursor-pointer hover:scale-110 transition-transform" */}
+              {/*   onClick={() => handleAdd(blog.id)} */}
+              {/*   title="Add" */}
+              {/* /> */}
               <Trash2
                 className="w-6 h-6 text-red-500 cursor-pointer hover:scale-110 transition-transform"
                 onClick={() => handleRemove(blog.id)}
