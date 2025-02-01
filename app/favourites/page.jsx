@@ -28,6 +28,10 @@ function Favourites() {
     router.push("/blogs");
   };
 
+  const navigateToTheBlog = (slug) => {
+    router.push(`/blogs/${slug}`);
+  };
+
   useEffect(() => {
     const fetchSavedBlogs = async () => {
       try {
@@ -85,15 +89,17 @@ function Favourites() {
 
   if (savedBlogData.length === 0) {
     return (
-      <p className="text-2xl font-semibold text-gray-600">No Blogs Saved</p>
-      <div className="flex flex-col items-center justify-center min-h-screen text-center">
-        <button
-          onClick={navigateToBlogs}
-          className="mt-4 px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition"
-        >
-          Go To Blogs
-        </button>
-      </div>
+      <>
+        <p className="text-2xl font-semibold text-gray-600">No Blogs Saved</p>
+        <div className="flex flex-col items-center justify-center min-h-screen text-center">
+          <button
+            onClick={navigateToBlogs}
+            className="mt-4 px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition"
+          >
+            Go To Blogs
+          </button>
+        </div>
+      </>
     );
   }
 
@@ -132,6 +138,7 @@ function Favourites() {
               <ExternalLink
                 className="w-6 h-6 text-blue-500 cursor-pointer hover:scale-110 transition-transform"
                 title="View Details"
+                onClick={navigateToTheBlog(blog.slug)}
               />
               {/* <PlusCircle */}
               {/*   className="w-6 h-6 text-green-500 cursor-pointer hover:scale-110 transition-transform" */}
