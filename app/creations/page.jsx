@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import axios from "axios";
+import axios from "../../utils/axios.js";
 import {
   PlusCircle,
   Trash2,
@@ -16,10 +16,10 @@ import Toast from "../../components/ui/Toast";
 function Creations() {
   const [currentUserBlogData, setCurrentUserBlogData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [token, setToken] = useState(null);
+  const [userName, setUserName] = useState(null);
   const router = useRouter();
   const { state } = useAppState();
-  const token = localStorage.getItem("accessToken");
-  const userName = localStorage.getItem("userName");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortType, setSortType] = useState("newest");
   const [isToast, setIsToast] = useState(false);
@@ -28,23 +28,32 @@ function Creations() {
     textcol: "",
   });
 
-  // Check for token and fetch blogs
+  // Initialize token and userName after component mounts
   useEffect(() => {
-    if (!token) {
-      router.push("/login");
-      return;
+    if (typeof window !== "undefined") {
+      const storedToken = localStorage.getItem("accessToken");
+      const storedUserName = localStorage.getItem("userName");
+      setToken(storedToken);
+      setUserName(storedUserName);
+
+      if (!storedToken) {
+        router.push("/login");
+        return;
+      }
     }
+  }, [router]);
+
+  // Fetch blogs after token is available
+  useEffect(() => {
+    if (!token) return;
 
     const fetchSavedBlogs = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:8000/api/cu-blogs/",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+        const response = await axios.get("cu-blogs/", {
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-        );
+        });
         setCurrentUserBlogData(response.data);
         setIsLoading(false);
       } catch (e) {
@@ -60,7 +69,7 @@ function Creations() {
     fetchSavedBlogs();
   }, [token, router]);
 
-  // Filtering blogs based on search query
+  // Rest of your component logic remains the same
   const filteredData = useMemo(() => {
     return currentUserBlogData.filter(
       (item) =>
@@ -69,7 +78,6 @@ function Creations() {
     );
   }, [currentUserBlogData, searchQuery]);
 
-  // Sorting the filtered data
   const sortedData = useMemo(() => {
     return [...filteredData].sort((a, b) => {
       if (sortType === "newest") {
@@ -102,13 +110,14 @@ function Creations() {
   };
 
   const handleRemove = async (blogId) => {
+    if (!token) return;
+
     try {
-      await axios.delete(`http://localhost:8000/api/dl-blog/${blogId}/`, {
+      await axios.delete(`dl-blog/${blogId}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      // Update the UI by removing the deleted blog
       setCurrentUserBlogData((prev) =>
         prev.filter((blog) => blog.id !== blogId),
       );
@@ -221,17 +230,16 @@ function Creations() {
             </div>
           </div>
         ))}
-        {isToast && (
-          <Toast
-            setIsToast={setIsToast}
-            message={toastData.message}
-            isToast={isToast}
-            textcol={toastData.textcol}
-          />
-        )}
       </div>
+      {isToast && (
+        <Toast
+          setIsToast={setIsToast}
+          message={toastData.message}
+          isToast={isToast}
+          textcol={toastData.textcol}
+        />
+      )}
     </div>
   );
 }
-
 export default Creations;
