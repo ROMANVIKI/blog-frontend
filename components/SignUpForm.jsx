@@ -22,7 +22,6 @@ const checkExistingUserName = async (username) => {
     const res = await axios.post("check-username/", {
       username,
     });
-    console.log(`API Response: ${res.data.exists}`);
     return res.data.exists;
   } catch (error) {
     console.error("Validation error:", error);
@@ -129,7 +128,6 @@ const SignupForm = () => {
               .required("Password is required"),
           })}
           onSubmit={async (values, { setSubmitting }) => {
-            console.log(values);
             try {
               await submitForm(values, router);
             } catch (error) {

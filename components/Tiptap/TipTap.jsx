@@ -108,7 +108,6 @@ const MenuBar = () => {
 
   const submitData = async ({ blogData }) => {
     try {
-      console.log(blogData, "from the submit func");
       const response = await axios.post("create-blog/", {
         title: blogData.title,
         content: blogData.content,
@@ -117,7 +116,6 @@ const MenuBar = () => {
       alert("Submitted successfully");
       return response;
     } catch (e) {
-      console.error("Error submitting blog data:", e);
       alert("An error occurred while submitting the blog.");
     }
   };
@@ -144,7 +142,6 @@ const MenuBar = () => {
     };
 
     submitData({ blogData });
-    console.log("Blog data to send:", blogData);
   }, [editor]);
 
   return (

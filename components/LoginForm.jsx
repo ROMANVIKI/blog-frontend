@@ -40,8 +40,6 @@ const LoginForm = () => {
                     isLoggedIn: true,
                     loggedUserName: values.username,
                   }));
-                  console.log(response.data);
-                  alert("Token obtained successfully");
                   setSubmitting(false);
                   router.push("/blogs");
                 })

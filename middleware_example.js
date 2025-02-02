@@ -10,8 +10,6 @@ export function middleware(request) {
   );
 
   if (isProtectedPath && !token) {
-    console.log(token, "token from the middleware");
-
     return NextResponse.redirect(new URL("/login", request.url));
   }
 

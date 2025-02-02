@@ -250,7 +250,6 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
                 Authorization: `Bearer ${token}`,
               },
             });
-            console.log(response.data);
             setBlogData(response.data);
             setIsBookmark(response.data.is_saved);
             setHeartIconCol(response.data.is_liked);

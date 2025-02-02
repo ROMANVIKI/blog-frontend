@@ -125,14 +125,14 @@ const ImageResizer = ({ onImageSubmit }) => {
     const canvas = cropperRef.current.cropper.getCroppedCanvas();
 
     if (!canvas) {
-      console.error("Failed to get cropped canvas.");
+      alert("Failed to get cropped canvas.");
       return;
     }
 
     canvas.toBlob(
       (blob) => {
         if (!blob) {
-          console.error("Failed to create blob from canvas.");
+          alert("Failed to create blog from canvas");
           return;
         }
 

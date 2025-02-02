@@ -82,8 +82,6 @@ const BlogViewer = React.memo(() => {
     });
   }, [filteredData, sortType]);
 
-  console.log(sortedData);
-
   // Rendering blogs after filtering and sorting
   const renderedBlogs = useMemo(() => {
     return sortedData.map((blog) => (
