@@ -2,11 +2,22 @@
 import React, { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
+import axios from "../utils/axios";
 import ImageResizer from "../components/ImageResizer";
 import Image from "next/image";
+import AnonymouseUserImg from "../public/annymous_user.jpg";
+import { useAppState } from "../context/StateContext";
+import { useRouter } from "next/navigation";
 
 const ProfileForm = () => {
+  const router = useRouter();
+  const { state } = useAppState();
+  const token = state.AccessToken;
+
+  if (!token) {
+    router.push("/login");
+  }
+
   const [initialValues, setInitialValues] = useState({
     id: "",
     firstName: "",
@@ -31,7 +42,7 @@ const ProfileForm = () => {
 
   const fetchUser = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/user/", {
+      const response = await axios.get("user/", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
@@ -74,16 +85,12 @@ const ProfileForm = () => {
         formData.append("avatar", values.avatar);
       }
 
-      await axios.put(
-        `http://localhost:8000/api/edit-user/${values.id}/`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-            "Content-Type": "multipart/form-data",
-          },
+      await axios.put(`edit-user/${values.id}/`, formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          "Content-Type": "multipart/form-data",
         },
-      );
+      });
 
       alert("Profile updated successfully!");
       // Refetch user data after update
@@ -101,7 +108,7 @@ const ProfileForm = () => {
         <h2 className="text-xl font-semibold mb-6 text-center">
           Profile Settings
         </h2>
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col mb-4 items-center">
           <p className="text-lg pb-4">Avatar</p>
           {userAvatar ? (
             <Image
@@ -112,7 +119,13 @@ const ProfileForm = () => {
               className="rounded-full"
             />
           ) : (
-            <p>No profile picture available</p>
+            <Image
+              src={AnonymouseUserImg}
+              width={120}
+              height={120}
+              alt="profile picture"
+              className="rounded-full"
+            />
           )}
           <ImageResizer onImageSubmit={handleAvatarChange} />
         </div>

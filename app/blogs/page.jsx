@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { Loader2, Heart, MessageCircleMore, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import axios from "../../utils/axios";
 
 const Alert = React.memo(
   ({ children, variant = "default", className = "" }) => {
@@ -39,12 +40,8 @@ const BlogViewer = React.memo(() => {
   // Fetch blogs from API
   const fetchBlogs = useCallback(async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/blogs/");
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      const data = await response.json();
-      setBlogs(data);
+      const response = await axios.get("blogs/");
+      setBlogs(response.data);
     } catch (error) {
       setError(error.message);
     } finally {

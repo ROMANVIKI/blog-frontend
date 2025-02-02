@@ -4,8 +4,8 @@ import React, { useEffect } from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import { useAppState } from "../context/StateContext";
+import axios from "../utils/axios";
 
 const LoginForm = () => {
   const router = useRouter();
@@ -26,7 +26,7 @@ const LoginForm = () => {
           onSubmit={(values, { setSubmitting }) => {
             try {
               axios
-                .post("http://localhost:8000/api/token/", {
+                .post("token/", {
                   username: values.username,
                   password: values.password,
                 })

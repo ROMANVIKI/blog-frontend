@@ -23,7 +23,7 @@ import ts from "highlight.js/lib/languages/typescript";
 import html from "highlight.js/lib/languages/xml";
 // load all languages with "all" or common languages with "common"
 import { all, createLowlight } from "lowlight";
-import axios from "axios";
+import axios from "../../utils/axios";
 
 import {
   IconH1,
@@ -109,14 +109,11 @@ const MenuBar = () => {
   const submitData = async ({ blogData }) => {
     try {
       console.log(blogData, "from the submit func");
-      const response = await axios.post(
-        "http://localhost:8000/api/create-blog/",
-        {
-          title: blogData.title,
-          content: blogData.content,
-          author: blogData.author,
-        },
-      );
+      const response = await axios.post("create-blog/", {
+        title: blogData.title,
+        content: blogData.content,
+        author: blogData.author,
+      });
       alert("Submitted successfully");
       return response;
     } catch (e) {

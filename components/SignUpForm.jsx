@@ -3,16 +3,13 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import { useRouter } from "next/navigation";
+import axios from "../utils/axios";
 
 // Backend validation function
 const checkExistingUser = async (email) => {
   try {
-    const response = await axios.post(
-      "http://localhost:8000/api/check-email/",
-      { email },
-    );
+    const response = await axios.post("check-email/", { email });
     return response.data.exists;
   } catch (error) {
     console.error("Validation error:", error);
@@ -22,7 +19,7 @@ const checkExistingUser = async (email) => {
 
 const checkExistingUserName = async (username) => {
   try {
-    const res = await axios.post("http://localhost:8000/api/check-username/", {
+    const res = await axios.post("check-username/", {
       username,
     });
     console.log(`API Response: ${res.data.exists}`);
@@ -40,17 +37,13 @@ const SignupForm = () => {
   const [emailError, setEmailError] = useState("");
   const [userNameError, setUserNameError] = useState("");
 
-
-    const submitForm = async (values) => {
+  const submitForm = async (values) => {
     try {
-      const response = await axios.post(
-        "http://localhost:8000/api/create-user/",
-        {
-          username: values.userName,
-          email: values.email,
-          password: values.password,
-        },
-      );
+      const response = await axios.post("create-user/", {
+        username: values.userName,
+        email: values.email,
+        password: values.password,
+      });
       if (response.data) {
         router.push("/login");
       }

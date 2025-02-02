@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import BlogViewer from "../../../components/Tiptap/BlogViewer";
-import axios from "axios";
 import {
   Loader2,
   User,
@@ -17,6 +16,8 @@ import Image from "next/image";
 import { useFetchUser } from "../../../components/useFetchUser";
 import Toast from "../../../components/ui/Toast";
 import { useAppState } from "../../../context/StateContext";
+import axios from "../../../utils/axios";
+import AnonymousUserImg from "../../../public/annymous_user.jpg";
 
 const DetailedBlogComp = ({ params: paramsPromise }) => {
   const [params, setParams] = useState(null);
@@ -71,14 +72,11 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
       if (heartIconCol) {
         try {
           const likeId = getLikeId();
-          const response = await axios.delete(
-            `http://localhost:8000/api/dl-like/${likeId}/`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
+          const response = await axios.delete(`dl-like/${likeId}/`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
             },
-          );
+          });
           setToastData({
             message: "You unliked the blog!!",
             textcol: "text-red-800",
@@ -96,7 +94,7 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
       if (!heartIconCol) {
         try {
           const response = await axios.post(
-            `http://localhost:8000/api/like/`,
+            `like/`,
             {
               liked_by: user ? user.id : userId,
               blog: blogData.id,
@@ -137,7 +135,7 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
     } else {
       try {
         const response = await axios.post(
-          "http://localhost:8000/api/save-blog/",
+          "save-blog/",
           {
             saved_by: user.id,
             saved_blog: blogData.id,
@@ -151,7 +149,7 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
         );
         setToastData({
           message: "Bookmarked SuccessFully!",
-          textcol: "text-green-500",
+          textcol: "text-cyan-500",
         });
         setIsToast(true);
         setIsBookmark((prev) => !prev);
@@ -192,7 +190,7 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/create-comment/",
+        "create-comment/",
         {
           blog: blogData.id,
           comment: newComment,
@@ -247,14 +245,11 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
       if (params?.slug) {
         if (token) {
           try {
-            const response = await axios.get(
-              `http://localhost:8000/api/blog/${params.slug}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
+            const response = await axios.get(`blog/${params.slug}`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
               },
-            );
+            });
             console.log(response.data);
             setBlogData(response.data);
             setIsBookmark(response.data.is_saved);
@@ -301,7 +296,11 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
               <Image
                 width={50}
                 height={50}
-                src={blogData.author_avatar}
+                src={
+                  blogData.author_avatar
+                    ? blogData.author_avatar
+                    : AnonymousUserImg
+                }
                 alt="author profile picture"
                 className="rounded-full"
               />

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../../utils/axios";
 import {
   PlusCircle,
   Trash2,
@@ -35,14 +35,11 @@ function Favourites() {
   useEffect(() => {
     const fetchSavedBlogs = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:8000/api/saved-blogs/",
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-            },
+        const response = await axios.get("saved-blogs/", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
-        );
+        });
         setSavedBlogData(response.data);
         setIsLoading(false);
       } catch (e) {
@@ -62,14 +59,11 @@ function Favourites() {
     alert(`Remove icon clicked for blog ID: ${blogId}`);
     const deleteSavedBlog = async () => {
       try {
-        const response = await axios.delete(
-          `http://localhost:8000/api/dl-saved-blog/${blogId}/`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+        const response = await axios.delete(`dl-saved-blog/${blogId}/`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-        );
+        });
         alert("deleted");
       } catch (error) {
         alert(error);

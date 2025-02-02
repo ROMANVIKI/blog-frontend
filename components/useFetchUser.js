@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import axios from "axios";
+import axios from "../utils/axios";
 
 export const useFetchUser = () => {
   const [user, setUser] = useState(null);
@@ -8,7 +8,7 @@ export const useFetchUser = () => {
 
   const fetchUser = useCallback(async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/user/", {
+      const response = await axios.get("user/", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
