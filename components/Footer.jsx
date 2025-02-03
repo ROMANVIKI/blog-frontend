@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import {
   Facebook,
   Twitter,
@@ -11,31 +12,38 @@ import {
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const [token, setToken] = useState();
+  useEffect(() => {
+    const accessToken = localStorage.getItem("accessToken");
+    setToken(accessToken);
+  }, [token]);
 
   return (
-    <footer className="bg-black dark:bg-black text-gray-400 relative overflow-hidden">
-      {/* Star decoration */}
-      <div className="absolute inset-0 opacity-10">
-        {[...Array(20)].map((_, i) => (
+    <footer className="bg-black text-gray-400 relative overflow-hidden border-t border-neutral-800">
+      {/* Starry Background */}
+      <div className="absolute inset-0 opacity-50">
+        {[...Array(100)].map((_, i) => (
           <Star
             key={i}
-            size={4}
+            size={Math.random() * 3 + 1} // Random star size between 1 and 4
             className="absolute animate-pulse"
             style={{
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
               animationDelay: `${Math.random() * 2}s`,
+              opacity: Math.random() * 0.5 + 0.2, // Random opacity for a natural look
             }}
           />
         ))}
       </div>
 
-      {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-purple-900/10 to-blue-900/10" />
+      {/* Black Hole Gradient */}
+      <div className="absolute inset-0 bg-gradient-radial from-transparent via-black to-black opacity-70" />
 
+      {/* Content */}
       <div className="relative max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Brand Section */}
-        <div className="space-y-4">
+        <div className="space-y-4 relative z-10">
           <h2 className="text-2xl font-bold text-white bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-400">
             ROMANVIKI
           </h2>
@@ -65,7 +73,7 @@ const Footer = () => {
         </div>
 
         {/* Quick Links */}
-        <div>
+        <div className="relative z-10">
           <h3 className="text-lg font-semibold text-white mb-4">Navigation</h3>
           <ul className="space-y-2">
             <li>
@@ -76,50 +84,72 @@ const Footer = () => {
                 Home Base
               </a>
             </li>
+            {/* <li> */}
+            {/*   <a */}
+            {/*     href="#" */}
+            {/*     className="hover:text-purple-400 transition-colors duration-300" */}
+            {/*   > */}
+            {/*     About */}
+            {/*   </a> */}
+            {/* </li> */}
             <li>
               <a
-                href="#"
+                href="/blogs"
                 className="hover:text-purple-400 transition-colors duration-300"
               >
-               About 
+                Latest Blogs
               </a>
             </li>
-            <li>
-              <a
-                href="#"
-                className="hover:text-purple-400 transition-colors duration-300"
-              >
-                Blogs
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="hover:text-purple-400 transition-colors duration-300"
-              >
-                Gallery
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="hover:text-purple-400 transition-colors duration-300"
-              >
-                Contact
-              </a>
-            </li>
+            {token && (
+              <>
+                <li>
+                  <a
+                    href="/profile"
+                    className="hover:text-purple-400 transition-colors duration-300"
+                  >
+                    Profile
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/favourites"
+                    className="hover:text-purple-400 transition-colors duration-300"
+                  >
+                    Favourites
+                  </a>
+                </li>
+
+                <li>
+                  <a
+                    href="/creations"
+                    className="hover:text-purple-400 transition-colors duration-300"
+                  >
+                    Create a Blog
+                  </a>
+                </li>
+
+                <li>
+                  <a
+                    href="/creations"
+                    className="hover:text-purple-400 transition-colors duration-300"
+                  >
+                    Your Creations
+                  </a>
+                </li>
+              </>
+            )}
           </ul>
         </div>
 
         {/* Contact Info */}
-        <div>
+        <div className="relative z-10">
           <h3 className="text-lg font-semibold text-white mb-4">
             Contact Station
           </h3>
           <ul className="space-y-2">
             <li className="flex items-center space-x-2 hover:text-purple-400 transition-colors duration-300">
               <Mail size={16} />
-              <span>transmit@romanviki.com</span>
+              <span>romanvikim.py@gmail.com</span>
             </li>
             <li className="flex items-center space-x-2 hover:text-purple-400 transition-colors duration-300">
               <Phone size={16} />
@@ -133,7 +163,7 @@ const Footer = () => {
         </div>
 
         {/* Newsletter */}
-        <div>
+        <div className="relative z-10">
           <h3 className="text-lg font-semibold text-white mb-4">
             Join Our Universe
           </h3>
@@ -157,32 +187,32 @@ const Footer = () => {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-gray-800">
+      <div className="border-t border-neutral-800">
         <div className="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm">
             © {currentYear} ROMANVIKI. All rights reserved across the digital
             universe.
           </p>
-          <div className="flex space-x-4 mt-4 md:mt-0">
-            <a
-              href="#"
-              className="text-sm hover:text-purple-400 transition-colors duration-300"
-            >
-              Privacy Protocol
-            </a>
-            <a
-              href="#"
-              className="text-sm hover:text-purple-400 transition-colors duration-300"
-            >
-              Terms of Operation
-            </a>
-            <a
-              href="#"
-              className="text-sm hover:text-purple-400 transition-colors duration-300"
-            >
-              Data Policy
-            </a>
-          </div>
+          {/* <div className="flex space-x-4 mt-4 md:mt-0"> */}
+          {/*   <a */}
+          {/*     href="#" */}
+          {/*     className="text-sm hover:text-purple-400 transition-colors duration-300" */}
+          {/*   > */}
+          {/*     Privacy Protocol */}
+          {/*   </a> */}
+          {/*   <a */}
+          {/*     href="#" */}
+          {/*     className="text-sm hover:text-purple-400 transition-colors duration-300" */}
+          {/*   > */}
+          {/*     Terms of Operation */}
+          {/*   </a> */}
+          {/*   <a */}
+          {/*     href="#" */}
+          {/*     className="text-sm hover:text-purple-400 transition-colors duration-300" */}
+          {/*   > */}
+          {/*     Data Policy */}
+          {/*   </a> */}
+          {/* </div> */}
         </div>
       </div>
     </footer>

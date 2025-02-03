@@ -65,3 +65,6 @@
   }
 }
 
+.bg-gradient-radial {
+  background: radial-gradient(circle, transparent, black);
+}

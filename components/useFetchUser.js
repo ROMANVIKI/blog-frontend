@@ -5,12 +5,13 @@ export const useFetchUser = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const token = localStorage.getItem("accessToken");
 
   const fetchUser = useCallback(async () => {
     try {
       const response = await axios.get("user/", {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       setUser(response.data);
@@ -24,7 +25,10 @@ export const useFetchUser = () => {
   }, []);
 
   useEffect(() => {
-    fetchUser();
+    if (token) {
+      fetchUser();
+    }
+    return null;
   }, [fetchUser]);
 
   return useMemo(() => ({ user, loading, error }), [user, loading, error]);

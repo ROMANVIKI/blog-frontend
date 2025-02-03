@@ -10,18 +10,8 @@ export default function FloatingNavDemo() {
       icon: <IconHome className="h-4 w-4  text-white" />,
     },
     {
-      name: "About",
-      link: "/about",
-      icon: <IconUser className="h-4 w-4 text-white" />,
-    },
-    {
       name: "Blogs",
       link: "/blogs",
-      icon: <IconMessage className="h-4 w-4 text-white" />,
-    },
-    {
-      name: "Favourites",
-      link: "/favourites",
       icon: <IconMessage className="h-4 w-4 text-white" />,
     },
   ];

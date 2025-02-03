@@ -9,7 +9,7 @@ export default function BackgroundLinesDemo() {
       <h2 className="bg-clip-text mb-6 md:mb-0 text-transparent text-center bg-gradient-to-b from-neutral-200 to-neutral-700 dark:from-neutral-600 dark:to-white text-4xl md:text-4xl lg:text-7xl font-sans py-2 md:py-10 relative z-20 font-bold tracking-tight">
         Welcome to My Blog Website, <br /> Your Source of Inspiration.
       </h2>
-      <p className="max-w-xl mx-auto text-sm md:text-lg text-neutral-700 dark:text-neutral-400 text-center max-md:mb-6">
+      <p className="max-w-xl mx-auto text-sm md:text-lg text-neutral-500 dark:text-neutral-400 text-center max-md:mb-6">
         Explore the latest insights, stories, and creative content. Get ready to
         be inspired and to inspire others by writing your own blog with my text
         editor, learn something new, and dive into my world of writing!

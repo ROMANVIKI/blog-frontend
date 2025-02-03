@@ -15,7 +15,7 @@ const Home = () => {
     <div>
       <BackgroundLinesDemo />
       <div className="bg-black">
-        <div className="bg-clip-text mb-6 md:mb-0 text-transparent text-center bg-gradient-to-b from-neutral-900 to-neutral-700 dark:from-neutral-600 dark:to-white text-2xl md:text-lg lg:text-3xl font-sans py-2 md:py-10 relative z-20 font-bold">
+        <div className="bg-clip-text mb-6 md:mb-0 text-transparent text-center bg-gradient-to-b from-neutral-300 to-neutral-400 dark:from-neutral-600 dark:to-white text-2xl md:text-lg lg:text-3xl font-sans py-2 md:py-10 relative z-20 font-bold">
           <h2>Tech I Trust</h2>
         </div>
 
@@ -27,14 +27,14 @@ const Home = () => {
       {isLogged ? (
         <Link
           href="/blogs"
-          className="inline-flex fixed bottom-4 right-4 x-50 cursor-pointer h-12 animate-shimmer items-center justify-center rounded-md border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium text-slate-400 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
+          className="inline-flex z-50 fixed bottom-4 right-4 x-50 cursor-pointer h-12 animate-shimmer items-center justify-center rounded-md border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium text-slate-400 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
         >
           Explore Blogs
         </Link>
       ) : (
         <Link
           href="/signup"
-          className="inline-flex fixed bottom-4 right-4 x-50 cursor-pointer h-12 animate-shimmer items-center justify-center rounded-md border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium text-slate-400 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
+          className="inline-flex z-50 fixed bottom-4 right-4 x-50 cursor-pointer h-12 animate-shimmer items-center justify-center rounded-md border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium text-slate-400 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
         >
           Get Started
         </Link>
