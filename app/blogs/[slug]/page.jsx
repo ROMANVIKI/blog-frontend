@@ -243,13 +243,9 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
   useEffect(() => {
     const fetchBlogData = async () => {
       if (params?.slug) {
-        if (token) {
+        if (!token) {
           try {
-            const response = await axios.get(`blog/${params.slug}`, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
+            const response = await axios.get(`blog-fnu/${params.slug}`);
             setBlogData(response.data);
             setIsBookmark(response.data.is_saved);
             setHeartIconCol(response.data.is_liked);
@@ -258,11 +254,14 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
             alert("Failed to load blog data.");
           }
         }
-        if (!token) {
+
+        if (token) {
           try {
-            const response = await axios.get(
-              `http://localhost:8000/api/blog-fnu/${params.slug}`,
-            );
+            const response = await axios.get(`blog/${params.slug}`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
             setBlogData(response.data);
             setIsBookmark(response.data.is_saved);
             setHeartIconCol(response.data.is_liked);
