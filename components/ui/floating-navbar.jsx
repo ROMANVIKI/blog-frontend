@@ -126,7 +126,7 @@ export const FloatingNav = ({ navItems, className }) => {
               <span className="block sm:hidden">
                 <IconDirectionsFilled className="h-4 w-4 text-white" />
               </span>
-              <span className="hidden sm:block text-sm">Profile</span>
+              <span className="hidden sm:block text-sm">Your Blogs</span>
             </Link>
             <Link
               href="/create-blog"

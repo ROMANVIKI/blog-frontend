@@ -12,7 +12,20 @@ import { useRouter } from "next/navigation";
 const ProfileForm = () => {
   const router = useRouter();
   const { state } = useAppState();
-  const token = state.AccessToken;
+  const token = localStorage.getItem("accessToken"); // Use localStorage directly
+  const [isToast, setIsToast] = useState(false);
+  const [toastData, setToastData] = useState({
+    message: "",
+    textcol: "",
+  });
+
+  // Redirect to login if no token is found
+  useEffect(() => {
+    if (!token) {
+      router.push("/login");
+      return null; // Return null to prevent rendering the rest of the component
+    }
+  }, []);
 
   const [initialValues, setInitialValues] = useState({
     id: "",
@@ -25,13 +38,6 @@ const ProfileForm = () => {
   });
 
   const [userAvatar, setUserAvatar] = useState();
-
-  useEffect(() => {
-    if (!token) {
-      router.push("/login");
-      return;
-    }
-  }, [token, router]);
 
   const validationSchema = Yup.object({
     firstName: Yup.string().required("First name is required"),
@@ -47,7 +53,7 @@ const ProfileForm = () => {
     try {
       const response = await axios.get("user/", {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${token}`, // Use the token from localStorage
         },
       });
       const userData = response.data;
@@ -92,16 +98,23 @@ const ProfileForm = () => {
 
       await axios.put(`edit-user/${values.id}/`, formData, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${token}`, // Use the token from localStorage
           "Content-Type": "multipart/form-data",
         },
       });
+      setToastData({
+        message: "You unliked the blog!!",
+        textcol: "text-red-800",
+      });
+      setIsToast(true);
 
-      alert("Profile updated successfully!");
       fetchUser();
     } catch (error) {
-      console.error("Failed to update profile:", error);
-      alert("Error updating profile");
+      setToastData({
+        message: "Error while sending the data, please try again later...!!",
+        textcol: "text-red-800",
+      });
+      setIsToast(true);
     }
     setSubmitting(false);
   };
@@ -119,7 +132,7 @@ const ProfileForm = () => {
             <div className="w-32 h-32 rounded-full overflow-hidden ring-4 ring-blue-100 shadow-lg mb-4">
               {userAvatar ? (
                 <Image
-                  src={`http://localhost:8000${userAvatar}`}
+                  src={`https://vblog-gbkd.onrender.com${userAvatar}`}
                   width={128}
                   height={128}
                   alt="profile picture"
@@ -299,6 +312,14 @@ const ProfileForm = () => {
             </Form>
           )}
         </Formik>
+        {isToast && (
+          <Toast
+            setIsToast={setIsToast}
+            message={toastData.message}
+            isToast={isToast}
+            textcol={toastData.textcol}
+          />
+        )}
       </div>
     </div>
   );

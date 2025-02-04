@@ -112,7 +112,7 @@ const ProfileForm = () => {
           <p className="text-lg pb-4">Avatar</p>
           {userAvatar ? (
             <Image
-              src={`http://localhost:8000${userAvatar}`}
+              src={`https://vblog-gbkd.onrender.com/media/${userAvatar}`}
               width={120}
               height={120}
               alt="profile picture"
