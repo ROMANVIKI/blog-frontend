@@ -11,17 +11,24 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation"; // Import useRouter for navigation
 import { useAppState } from "../../context/StateContext";
+import { useFetchUser } from "../../components/useFetchUser.js";
 
 function Favourites() {
   const [savedBlogData, setSavedBlogData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter(); // Initialize useRouter
+  const router = useRouter();
 
   const { state } = useAppState();
   const token = state.AccessToken;
 
+  useEffect(() => {
+    if (!token) {
+      router.push("/login");
+    }
+  }, [token, router]);
+
   const navigateBack = () => {
-    router.back(); // Navigate back to the previous page
+    router.back();
   };
 
   const navigateToBlogs = () => {
@@ -37,7 +44,7 @@ function Favourites() {
       try {
         const response = await axios.get("saved-blogs/", {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         setSavedBlogData(response.data);
@@ -50,10 +57,6 @@ function Favourites() {
 
     fetchSavedBlogs();
   }, []);
-
-  // const handleAdd = (blogId) => {
-  //   alert(`Add icon clicked for blog ID: ${blogId}`);
-  // };
 
   const handleRemove = (blogId) => {
     alert(`Remove icon clicked for blog ID: ${blogId}`);
@@ -132,13 +135,8 @@ function Favourites() {
               <ExternalLink
                 className="w-6 h-6 text-blue-500 cursor-pointer hover:scale-110 transition-transform"
                 title="View Details"
-                onClick={navigateToTheBlog(blog.slug)}
+                onClick={() => navigateToTheBlog(blog.slug)} // Fixed here
               />
-              {/* <PlusCircle */}
-              {/*   className="w-6 h-6 text-green-500 cursor-pointer hover:scale-110 transition-transform" */}
-              {/*   onClick={() => handleAdd(blog.id)} */}
-              {/*   title="Add" */}
-              {/* /> */}
               <Trash2
                 className="w-6 h-6 text-red-500 cursor-pointer hover:scale-110 transition-transform"
                 onClick={() => handleRemove(blog.id)}
