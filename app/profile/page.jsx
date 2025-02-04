@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 const ProfileForm = () => {
   const router = useRouter();
   const { state } = useAppState();
+  const token = state.AccessToken;
   const [isToast, setIsToast] = useState(false);
   const [toastData, setToastData] = useState({
     message: "",
