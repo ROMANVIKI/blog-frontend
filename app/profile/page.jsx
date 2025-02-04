@@ -12,7 +12,6 @@ import { useRouter } from "next/navigation";
 const ProfileForm = () => {
   const router = useRouter();
   const { state } = useAppState();
-  const token = localStorage.getItem("accessToken"); // Use localStorage directly
   const [isToast, setIsToast] = useState(false);
   const [toastData, setToastData] = useState({
     message: "",
@@ -21,6 +20,8 @@ const ProfileForm = () => {
 
   // Redirect to login if no token is found
   useEffect(() => {
+    const token = localStorage.getItem("accessToken"); // Use localStorage directly
+
     if (!token) {
       router.push("/login");
       return null; // Return null to prevent rendering the rest of the component
