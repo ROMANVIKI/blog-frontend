@@ -21,11 +21,11 @@ function Favourites() {
   const { state } = useAppState();
   const token = state.AccessToken;
 
-  useEffect(() => {
-    if (!token) {
-      router.push("/login");
-    }
-  }, [token, router]);
+  // useEffect(() => {
+  //   if (!token) {
+  //     router.push("/login");
+  //   }
+  // }, [token, router]);
 
   const navigateBack = () => {
     router.back();
