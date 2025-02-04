@@ -1,20 +1,13 @@
-"use client";
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useMemo,
-  memo,
-} from "react";
+import { createContext, useContext, useState, useEffect, useMemo } from "react";
 
 const StateContext = createContext(null);
 
-export const StateProvider = memo(({ children }) => {
+export const StateProvider = ({ children }) => {
   const [state, setState] = useState({
     isLoggedIn: false,
     loggedUserName: "",
-    AccessToken: "",
+    AccessToken: undefined,
+    isLoading: true,
   });
 
   useEffect(() => {
@@ -23,21 +16,32 @@ export const StateProvider = memo(({ children }) => {
     const accessToken = localStorage.getItem("accessToken");
 
     setState({
-      isLoggedIn: localIsLogged === "true", // Convert string to boolean
+      isLoggedIn: localIsLogged === "true",
       loggedUserName: localUserName || "",
       AccessToken: accessToken || "",
+      isLoading: false,
     });
   }, []);
 
-  // Memoize the context value to prevent unnecessary re-renders
-  const contextValue = useMemo(() => ({ state, setState }), [state]);
+  const contextValue = useMemo(
+    () => ({
+      state,
+      setState: (newState) => {
+        setState((prev) => ({
+          ...prev,
+          ...newState,
+        }));
+      },
+    }),
+    [state],
+  );
 
   return (
     <StateContext.Provider value={contextValue}>
       {children}
     </StateContext.Provider>
   );
-});
+};
 
 export function useAppState() {
   const context = useContext(StateContext);

@@ -1,6 +1,6 @@
-"use client";
-
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAppState } from "../../context/StateContext";
 import axios from "../../utils/axios";
 import {
   PlusCircle,
@@ -9,103 +9,111 @@ import {
   Loader2,
   CircleArrowLeft,
 } from "lucide-react";
-import { useRouter } from "next/navigation"; // Import useRouter for navigation
-import { useAppState } from "../../context/StateContext";
-import { useFetchUser } from "../../components/useFetchUser.js";
 
-function Favourites() {
+const Favourites = () => {
   const [savedBlogData, setSavedBlogData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isInitialized, setIsInitialized] = useState(false);
   const router = useRouter();
-
   const { state } = useAppState();
-  const token = state.AccessToken;
 
-  // useEffect(() => {
-  //   if (!token) {
-  //     router.push("/login");
-  //   }
-  // }, [token, router]);
+  // Authentication check effect
+  useEffect(() => {
+    if (!isInitialized && state.AccessToken !== undefined) {
+      setIsInitialized(true);
+      if (!state.AccessToken) {
+        router.push("/login");
+      }
+    }
+  }, [state.AccessToken, isInitialized, router]);
 
-  const navigateBack = () => {
-    router.back();
-  };
-
-  const navigateToBlogs = () => {
-    router.push("/blogs");
-  };
-
-  const navigateToTheBlog = (slug) => {
-    router.push(`/blogs/${slug}`);
-  };
-
+  // Data fetching effect
   useEffect(() => {
     const fetchSavedBlogs = async () => {
+      if (!state.AccessToken) return;
+
       try {
         const response = await axios.get("saved-blogs/", {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${state.AccessToken}`,
           },
         });
         setSavedBlogData(response.data);
-        setIsLoading(false);
-      } catch (e) {
-        console.error("Error fetching saved blogs:", e);
-        alert("Failed to fetch saved blogs");
-      }
-    };
-
-    fetchSavedBlogs();
-  }, []);
-
-  const handleRemove = (blogId) => {
-    alert(`Remove icon clicked for blog ID: ${blogId}`);
-    const deleteSavedBlog = async () => {
-      try {
-        const response = await axios.delete(`dl-saved-blog/${blogId}/`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        alert("deleted");
       } catch (error) {
-        alert(error);
+        console.error("Error fetching saved blogs:", error);
+        if (error.response?.status === 403) {
+          router.push("/login");
+        }
+      } finally {
+        setIsLoading(false);
       }
     };
-    deleteSavedBlog();
+
+    if (isInitialized) {
+      fetchSavedBlogs();
+    }
+  }, [state.AccessToken, isInitialized, router]);
+
+  const handleRemove = async (blogId) => {
+    try {
+      await axios.delete(`dl-saved-blog/${blogId}/`, {
+        headers: {
+          Authorization: `Bearer ${state.AccessToken}`,
+        },
+      });
+
+      // Optimistically update UI
+      setSavedBlogData((prev) => prev.filter((blog) => blog.id !== blogId));
+    } catch (error) {
+      console.error("Error removing blog:", error);
+      alert("Failed to remove blog");
+    }
   };
 
+  // Early return while checking authentication
+  if (!isInitialized) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-4">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+        <p className="mt-4 text-gray-600">Initializing...</p>
+      </div>
+    );
+  }
+
+  // Loading state
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] p-4">
+      <div className="flex flex-col items-center justify-center min-h-screen p-4">
         <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
         <p className="mt-4 text-gray-600">Loading saved blogs...</p>
       </div>
     );
   }
 
+  // Empty state
   if (savedBlogData.length === 0) {
     return (
-      <>
-        <p className="text-2xl font-semibold text-gray-600">No Blogs Saved</p>
-        <div className="flex flex-col items-center justify-center min-h-screen text-center">
-          <button
-            onClick={navigateToBlogs}
-            className="mt-4 px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition"
-          >
-            Go To Blogs
-          </button>
-        </div>
-      </>
+      <div className="flex flex-col items-center justify-center min-h-screen p-4">
+        <p className="text-2xl font-semibold text-gray-600 mb-4">
+          No Blogs Saved
+        </p>
+        <button
+          onClick={() => router.push("/blogs")}
+          className="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition"
+        >
+          Go To Blogs
+        </button>
+      </div>
     );
   }
 
+  // Main content
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center">
           <CircleArrowLeft
-            onClick={navigateBack}
+            onClick={() => router.back()}
             className="w-8 h-8 text-gray-700 cursor-pointer hover:text-gray-900 transition-colors"
           />
           <h1 className="text-3xl font-bold ml-4 text-gray-800">Saved Blogs</h1>
@@ -135,7 +143,7 @@ function Favourites() {
               <ExternalLink
                 className="w-6 h-6 text-blue-500 cursor-pointer hover:scale-110 transition-transform"
                 title="View Details"
-                onClick={() => navigateToTheBlog(blog.slug)} // Fixed here
+                onClick={() => router.push(`/blogs/${blog.slug}`)}
               />
               <Trash2
                 className="w-6 h-6 text-red-500 cursor-pointer hover:scale-110 transition-transform"
@@ -148,6 +156,6 @@ function Favourites() {
       </div>
     </div>
   );
-}
+};
 
 export default Favourites;
