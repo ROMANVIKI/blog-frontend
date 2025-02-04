@@ -1,3 +1,4 @@
+"use client";
 import { createContext, useContext, useState, useEffect, useMemo } from "react";
 
 const StateContext = createContext(null);
