@@ -61,7 +61,11 @@ function Creations() {
         if (e.response?.status === 401) {
           router.push("/login");
         } else {
-          alert("Failed to fetch saved blogs");
+          setToastData({
+            message: "failed to fetch saved blogs!!",
+            textcol: "text-red-500",
+          });
+          setIsToast(true);
         }
       }
     };
@@ -127,8 +131,11 @@ function Creations() {
       });
       setIsToast(true);
     } catch (error) {
-      console.error("Error deleting blog:", error);
-      alert("Failed to delete blog");
+      setToastData({
+        message: "Error while deleting the blog!!",
+        textcol: "text-red-500",
+      });
+      setIsToast(true);
     }
   };
 

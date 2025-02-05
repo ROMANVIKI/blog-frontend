@@ -1,6 +1,6 @@
 "use client";
 import "./styles.scss";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { Color } from "@tiptap/extension-color";
 import Heading from "@tiptap/extension-heading";
 import Image from "@tiptap/extension-image";
@@ -24,6 +24,7 @@ import html from "highlight.js/lib/languages/xml";
 // load all languages with "all" or common languages with "common"
 import { all, createLowlight } from "lowlight";
 import axios from "../../utils/axios";
+import Toast from "../../components/ui/Toast";
 
 import {
   IconH1,
@@ -60,6 +61,20 @@ const MenuBar = () => {
   const { editor } = useCurrentEditor();
   const [height, setHeight] = React.useState(480);
   const [width, setWidth] = React.useState(640);
+  // const [token, setToken] = useState(null);
+
+  const [isToast, setIsToast] = useState(false);
+  const [toastData, setToastData] = useState({
+    message: "",
+    textcol: "",
+  });
+
+  // useEffect(() => {
+  //   const token1 = localStorage.getItem("accessToken");
+  //   if (!token1) {
+  //     setToken(token1);
+  //   }
+  // }, []);
 
   if (!editor) return null;
 
@@ -108,15 +123,31 @@ const MenuBar = () => {
 
   const submitData = async ({ blogData }) => {
     try {
-      const response = await axios.post("create-blog/", {
-        title: blogData.title,
-        content: blogData.content,
-        author: blogData.author,
+      const response = await axios.post(
+        "create-blog/",
+        {
+          title: blogData.title,
+          content: blogData.content,
+          author: blogData.author,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        },
+      );
+      setToastData({
+        message: "Blog Created Successfully!!",
+        textcol: "text-blue-500",
       });
-      alert("Submitted successfully");
-      return response;
+      setIsToast(true);
     } catch (e) {
-      alert("An error occurred while submitting the blog.");
+      setToastData({
+        message:
+          "Error while trying to submit the blog, please try again later!",
+        textcol: "text-red-500",
+      });
+      setIsToast(true);
     }
   };
 
@@ -436,6 +467,14 @@ const TipTapEditor = () => {
           }}
         ></EditorProvider>
       </div>
+      {isToast && (
+        <Toast
+          setIsToast={setIsToast}
+          message={toastData.message}
+          isToast={isToast}
+          textcol={toastData.textcol}
+        />
+      )}
     </div>
   );
 };

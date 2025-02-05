@@ -10,6 +10,7 @@ import {
   Loader2,
   CircleArrowLeft,
 } from "lucide-react";
+import Toast from "../../components/ui/Toast";
 
 const Favourites = () => {
   const [savedBlogData, setSavedBlogData] = useState([]);
@@ -17,6 +18,12 @@ const Favourites = () => {
   const [isInitialized, setIsInitialized] = useState(false);
   const router = useRouter();
   const { state } = useAppState();
+
+  const [isToast, setIsToast] = useState(false);
+  const [toastData, setToastData] = useState({
+    message: "",
+    textcol: "",
+  });
 
   // Authentication check effect
   useEffect(() => {
@@ -41,10 +48,11 @@ const Favourites = () => {
         });
         setSavedBlogData(response.data);
       } catch (error) {
-        console.error("Error fetching saved blogs:", error);
-        if (error.response?.status === 403) {
-          router.push("/login");
-        }
+        setToastData({
+          message: "Error fetching saved blogs!!",
+          textcol: "text-red-800",
+        });
+        setIsToast(true);
       } finally {
         setIsLoading(false);
       }
@@ -65,9 +73,17 @@ const Favourites = () => {
 
       // Optimistically update UI
       setSavedBlogData((prev) => prev.filter((blog) => blog.id !== blogId));
+      setToastData({
+        message: "Blog deleted successfully!!",
+        textcol: "text-green-800",
+      });
+      setIsToast(true);
     } catch (error) {
-      console.error("Error removing blog:", error);
-      alert("Failed to remove blog");
+      setToastData({
+        message: "Can't delete the blog at the moment, try again later!!",
+        textcol: "text-red-800",
+      });
+      setIsToast(true);
     }
   };
 

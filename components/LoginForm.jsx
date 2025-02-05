@@ -6,10 +6,16 @@ import * as Yup from "yup";
 import { useRouter } from "next/navigation";
 import { useAppState } from "../context/StateContext";
 import axios from "../utils/axios";
+import Toast from "../components/ui/Toast";
 
 const LoginForm = () => {
   const router = useRouter();
   const { state, setState } = useAppState();
+  const [isToast, setIsToast] = useState(false);
+  const [toastData, setToastData] = useState({
+    message: "",
+    textcol: "",
+  });
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -44,13 +50,21 @@ const LoginForm = () => {
                   router.push("/blogs");
                 })
                 .catch((error) => {
-                  alert(error);
+                  setToastData({
+                    message: "Error, please try again!!",
+                    textcol: "text-red-800",
+                  });
+                  setIsToast(true);
                   setSubmitting(false);
                 });
 
               // Your form submission logic here
             } catch (error) {
-              console.error("Submission error:", error);
+              setToastData({
+                message: "Server Error, please try again later!!",
+                textcol: "text-red-800",
+              });
+              setIsToast(true);
             } finally {
               setSubmitting(false);
             }
@@ -113,6 +127,14 @@ const LoginForm = () => {
             </Form>
           )}
         </Formik>
+        {isToast && (
+          <Toast
+            setIsToast={setIsToast}
+            message={toastData.message}
+            isToast={isToast}
+            textcol={toastData.textcol}
+          />
+        )}
       </div>
     </div>
   );

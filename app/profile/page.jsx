@@ -70,7 +70,11 @@ const ProfileForm = () => {
       });
       setUserAvatar(userData.avatar);
     } catch (error) {
-      alert(`Error: ${error.response?.data?.detail || error.message}`);
+      setToastData({
+        message: "Error occurred, please try again!!",
+        textcol: "text-red-800",
+      });
+      setIsToast(true);
     }
   };
 

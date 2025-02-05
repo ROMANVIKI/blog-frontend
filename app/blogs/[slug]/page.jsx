@@ -88,7 +88,11 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
           }));
           setHeartIconCol((prev) => !prev);
         } catch (e) {
-          alert(e);
+          setToastData({
+            message: "Error occurred, try again later!",
+            textcol: "text-red-500",
+          });
+          setIsToast(true);
         }
       }
       if (!heartIconCol) {
@@ -119,7 +123,11 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
 
           setHeartIconCol((prev) => !prev);
         } catch (e) {
-          alert(e);
+          setToastData({
+            message: "Can't like the blog at this moment ,try again later!",
+            textcol: "text-red-500",
+          });
+          setIsToast(true);
         }
       }
     }
@@ -154,7 +162,11 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
         setIsToast(true);
         setIsBookmark((prev) => !prev);
       } catch (error) {
-        alert(error);
+        setToastData({
+          message: "Error occurred, please try again later!",
+          textcol: "text-red-500",
+        });
+        setIsToast(true);
       }
     }
   };
@@ -163,10 +175,18 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
     navigator.clipboard
       .writeText(window.location.href)
       .then(() => {
-        alert("URL copied to clipboard");
+        setToastData({
+          message: "URL copied to clipboard!",
+          textcol: "text-green-500",
+        });
+        setIsToast(true);
       })
       .catch((err) => {
-        alert("Failed to copy URL: ", err);
+        setToastData({
+          message: "Failed to copy URL!",
+          textcol: "text-red-500",
+        });
+        setIsToast(true);
       });
   };
 
@@ -219,14 +239,25 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
         setNewComment("");
       }
     } catch (error) {
-      alert(error);
+      setToastData({
+        message: "Can't comment at this moment!",
+        textcol: "text-red-500",
+      });
+      setIsToast(true);
+
       // More detailed error handling
       if (error.response) {
-        alert(
-          `Failed to submit comment: ${JSON.stringify(error.response.data)}`,
-        );
+        setToastData({
+          message: "Failed to submit comment at this moment!",
+          textcol: "text-red-500",
+        });
+        setIsToast(true);
       } else {
-        alert("Failed to submit comment. Please check your connection.");
+        setToastData({
+          message: "Failed to submit comment. Please check your connection.",
+          textcol: "text-red-500",
+        });
+        setIsToast(true);
       }
     }
   };
@@ -251,7 +282,11 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
             setHeartIconCol(response.data.is_liked);
             setLoading(false);
           } catch (error) {
-            alert("Failed to load blog data.");
+            setToastData({
+              message: "Failed to load blog data.",
+              textcol: "text-red-500",
+            });
+            setIsToast(true);
           }
         }
 
@@ -267,7 +302,11 @@ const DetailedBlogComp = ({ params: paramsPromise }) => {
             setHeartIconCol(response.data.is_liked);
             setLoading(false);
           } catch (error) {
-            alert("Failed to load blog data.");
+            setToastData({
+              message: "Failed to load blog data.",
+              textcol: "text-red-500",
+            });
+            setIsToast(true);
           }
         }
       }

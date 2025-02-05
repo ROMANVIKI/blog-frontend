@@ -8,11 +8,17 @@ import Image from "next/image";
 import AnonymouseUserImg from "../public/annymous_user.jpg";
 import { useAppState } from "../context/StateContext";
 import { useRouter } from "next/navigation";
+import Toast from "../components/ui/Toast";
 
 const ProfileForm = () => {
   const router = useRouter();
   const { state } = useAppState();
   const token = state.AccessToken;
+  const [isToast, setIsToast] = useState(false);
+  const [toastData, setToastData] = useState({
+    message: "",
+    textcol: "",
+  });
 
   if (!token) {
     router.push("/login");
@@ -59,7 +65,11 @@ const ProfileForm = () => {
       });
       setUserAvatar(userData.avatar);
     } catch (error) {
-      alert(`Error: ${error.response?.data?.detail || error.message}`);
+      setToastData({
+        message: "Server error, try again later!!",
+        textcol: "text-red-500",
+      });
+      setIsToast(true);
     }
   };
 
@@ -92,12 +102,20 @@ const ProfileForm = () => {
         },
       });
 
-      alert("Profile updated successfully!");
+      setToastData({
+        message: "Profile updated successfully!",
+        textcol: "text-green-500",
+      });
+      setIsToast(true);
+
       // Refetch user data after update
       fetchUser();
     } catch (error) {
-      console.error("Failed to update profile:", error);
-      alert("Error updating profile");
+      setToastData({
+        message: "Error occurred, please try again later!!",
+        textcol: "text-red-500",
+      });
+      setIsToast(true);
     }
     setSubmitting(false);
   };
@@ -251,6 +269,14 @@ const ProfileForm = () => {
             </Form>
           )}
         </Formik>
+        {isToast && (
+          <Toast
+            setIsToast={setIsToast}
+            message={toastData.message}
+            isToast={isToast}
+            textcol={toastData.textcol}
+          />
+        )}
       </div>
     </div>
   );
