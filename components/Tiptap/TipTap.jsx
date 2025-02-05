@@ -392,6 +392,14 @@ const MenuBar = () => {
           </div>
         </div>
       </div>
+      {isToast && (
+        <Toast
+          setIsToast={setIsToast}
+          message={toastData.message}
+          isToast={isToast}
+          textcol={toastData.textcol}
+        />
+      )}
     </div>
   );
 };
@@ -467,14 +475,6 @@ const TipTapEditor = () => {
           }}
         ></EditorProvider>
       </div>
-      {isToast && (
-        <Toast
-          setIsToast={setIsToast}
-          message={toastData.message}
-          isToast={isToast}
-          textcol={toastData.textcol}
-        />
-      )}
     </div>
   );
 };
