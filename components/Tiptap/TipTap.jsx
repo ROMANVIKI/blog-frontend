@@ -21,10 +21,11 @@ import css from "highlight.js/lib/languages/css";
 import js from "highlight.js/lib/languages/javascript";
 import ts from "highlight.js/lib/languages/typescript";
 import html from "highlight.js/lib/languages/xml";
-// load all languages with "all" or common languages with "common"
 import { all, createLowlight } from "lowlight";
 import axios from "../../utils/axios";
+// import axios from "axios";
 import Toast from "../../components/ui/Toast";
+import { useRouter } from "next/navigation";
 
 import {
   IconH1,
@@ -62,7 +63,7 @@ const MenuBar = () => {
   const [height, setHeight] = React.useState(480);
   const [width, setWidth] = React.useState(640);
   // const [token, setToken] = useState(null);
-
+  const router = useRouter();
   const [isToast, setIsToast] = useState(false);
   const [toastData, setToastData] = useState({
     message: "",
@@ -141,10 +142,10 @@ const MenuBar = () => {
         textcol: "text-blue-500",
       });
       setIsToast(true);
+      router.push("/creations");
     } catch (e) {
       setToastData({
-        message:
-          "Error while trying to submit the blog, please try again later!",
+        message: `Error: Try using a different blog name or try again later.`,
         textcol: "text-red-500",
       });
       setIsToast(true);
@@ -176,179 +177,151 @@ const MenuBar = () => {
   }, [editor]);
 
   return (
-    <div className="bg-black bg-opacity-90 backdrop-blur-sm shadow-lg rounded-lg p-4 mb-4 sticky top-0 z-10 border border-gray-100">
-      <div className="flex flex-wrap gap-2">
-        <ButtonBase
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 1 }).run()
-          }
-          className={
-            editor.isActive("heading", { level: 1 }) ? "is-active" : ""
-          }
-        >
-          <IconH1 />
-        </ButtonBase>
-        <ButtonBase
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 2 }).run()
-          }
-          className={
-            editor.isActive("heading", { level: 2 }) ? "is-active" : ""
-          }
-        >
-          <IconH2 />
-        </ButtonBase>
-        <ButtonBase
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 3 }).run()
-          }
-          className={
-            editor.isActive("heading", { level: 3 }) ? "is-active" : ""
-          }
-        >
-          <IconH3 />
-        </ButtonBase>
-        <ButtonBase
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          disabled={!editor.can().chain().focus().toggleBold().run()}
-          isActive={editor.isActive("bold")}
-        >
-          <IconBold />
-        </ButtonBase>
-        <ButtonBase
-          onClick={() => editor.chain().focus().toggleItalic().run()}
-          disabled={!editor.can().chain().focus().toggleItalic().run()}
-          isActive={editor.isActive("italic")}
-        >
-          <IconItalic />
-        </ButtonBase>
-        <ButtonBase
-          onClick={() => editor.chain().focus().toggleStrike().run()}
-          disabled={!editor.can().chain().focus().toggleStrike().run()}
-          isActive={editor.isActive("strike")}
-        >
-          <IconStrikethrough />
-        </ButtonBase>
-        <ButtonBase
-          onClick={() => editor.chain().focus().setParagraph().run()}
-          isActive={editor.isActive("paragraph")}
-        >
-          <IconPilcrowRight />
-        </ButtonBase>
-        <ButtonBase
-          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-          className={editor.isActive("codeBlock") ? "is-active" : ""}
-        >
-          <IconCodeDots />
-        </ButtonBase>
-        <ButtonBase
-          onClick={() => editor.chain().focus().setCodeBlock().run()}
-          disabled={editor.isActive("codeBlock")}
-        >
-          <IconCode />
-        </ButtonBase>
-        <ButtonBase
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={editor.isActive("bulletList") ? "is-active" : ""}
-        >
-          <IconList />
-        </ButtonBase>
-        <ButtonBase
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={editor.isActive("orderedList") ? "is-active" : ""}
-        >
-          <IconListNumbers />
-        </ButtonBase>
-        <ButtonBase
-          onClick={() => editor.chain().focus().splitListItem("listItem").run()}
-          disabled={!editor.can().splitListItem("listItem")}
-        >
-          Split list item
-        </ButtonBase>
-        <ButtonBase
-          onClick={() => editor.chain().focus().sinkListItem("listItem").run()}
-          disabled={!editor.can().sinkListItem("listItem")}
-        >
-          Sink list item
-        </ButtonBase>
-        <ButtonBase
-          onClick={() => editor.chain().focus().liftListItem("listItem").run()}
-          disabled={!editor.can().liftListItem("listItem")}
-        >
-          Lift list item
-        </ButtonBase>
-        <ButtonBase
-          onClick={() => editor.chain().focus().setHorizontalRule().run()}
-        >
-          <IconArrowForwardUp />
-        </ButtonBase>
-        <ButtonBase onClick={() => editor.chain().focus().setHardBreak().run()}>
-          <IconBaselineDensityLarge />
-        </ButtonBase>
-        <ButtonBase
-          onClick={() => editor.chain().focus().undo().run()}
-          disabled={!editor.can().chain().focus().undo().run()}
-        >
-          <IconArrowBackUp />
-        </ButtonBase>
-        <ButtonBase
-          onClick={() => editor.chain().focus().redo().run()}
-          disabled={!editor.can().chain().focus().redo().run()}
-        >
-          <IconArrowForwardUp />
-        </ButtonBase>
-        <ButtonBase
-          onClick={() => editor.chain().focus().setColor("#958DF1").run()}
-          isActive={editor.isActive("textStyle", { color: "#958DF1" })}
-        >
-          <IconAccessible />
-        </ButtonBase>
-        <ButtonBase onClick={addImage}>
-          <IconPhotoScan />
-        </ButtonBase>
+    <>
+      <div className="bg-black bg-opacity-90 backdrop-blur-sm shadow-lg rounded-lg p-4 mb-4 sticky top-0 z-10 border border-gray-100">
+        <div className="flex flex-wrap gap-2">
+          <ButtonBase
+            onClick={() =>
+              editor.chain().focus().toggleHeading({ level: 1 }).run()
+            }
+            className={
+              editor.isActive("heading", { level: 1 }) ? "is-active" : ""
+            }
+          >
+            <IconH1 />
+          </ButtonBase>
+          <ButtonBase
+            onClick={() =>
+              editor.chain().focus().toggleHeading({ level: 2 }).run()
+            }
+            className={
+              editor.isActive("heading", { level: 2 }) ? "is-active" : ""
+            }
+          >
+            <IconH2 />
+          </ButtonBase>
+          <ButtonBase
+            onClick={() =>
+              editor.chain().focus().toggleHeading({ level: 3 }).run()
+            }
+            className={
+              editor.isActive("heading", { level: 3 }) ? "is-active" : ""
+            }
+          >
+            <IconH3 />
+          </ButtonBase>
+          <ButtonBase
+            onClick={() => editor.chain().focus().toggleBold().run()}
+            disabled={!editor.can().chain().focus().toggleBold().run()}
+            isActive={editor.isActive("bold")}
+          >
+            <IconBold />
+          </ButtonBase>
+          <ButtonBase
+            onClick={() => editor.chain().focus().toggleItalic().run()}
+            disabled={!editor.can().chain().focus().toggleItalic().run()}
+            isActive={editor.isActive("italic")}
+          >
+            <IconItalic />
+          </ButtonBase>
+          <ButtonBase
+            onClick={() => editor.chain().focus().toggleStrike().run()}
+            disabled={!editor.can().chain().focus().toggleStrike().run()}
+            isActive={editor.isActive("strike")}
+          >
+            <IconStrikethrough />
+          </ButtonBase>
+          <ButtonBase
+            onClick={() => editor.chain().focus().setParagraph().run()}
+            isActive={editor.isActive("paragraph")}
+          >
+            <IconPilcrowRight />
+          </ButtonBase>
+          <ButtonBase
+            onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+            className={editor.isActive("codeBlock") ? "is-active" : ""}
+          >
+            <IconCodeDots />
+          </ButtonBase>
+          <ButtonBase
+            onClick={() => editor.chain().focus().setCodeBlock().run()}
+            disabled={editor.isActive("codeBlock")}
+          >
+            <IconCode />
+          </ButtonBase>
+          <ButtonBase
+            onClick={() => editor.chain().focus().toggleBulletList().run()}
+            className={editor.isActive("bulletList") ? "is-active" : ""}
+          >
+            <IconList />
+          </ButtonBase>
+          <ButtonBase
+            onClick={() => editor.chain().focus().toggleOrderedList().run()}
+            className={editor.isActive("orderedList") ? "is-active" : ""}
+          >
+            <IconListNumbers />
+          </ButtonBase>
+          <ButtonBase
+            onClick={() =>
+              editor.chain().focus().splitListItem("listItem").run()
+            }
+            disabled={!editor.can().splitListItem("listItem")}
+          >
+            Split list item
+          </ButtonBase>
+          <ButtonBase
+            onClick={() =>
+              editor.chain().focus().sinkListItem("listItem").run()
+            }
+            disabled={!editor.can().sinkListItem("listItem")}
+          >
+            Sink list item
+          </ButtonBase>
+          <ButtonBase
+            onClick={() =>
+              editor.chain().focus().liftListItem("listItem").run()
+            }
+            disabled={!editor.can().liftListItem("listItem")}
+          >
+            Lift list item
+          </ButtonBase>
+          <ButtonBase
+            onClick={() => editor.chain().focus().setHorizontalRule().run()}
+          >
+            <IconArrowForwardUp />
+          </ButtonBase>
+          <ButtonBase
+            onClick={() => editor.chain().focus().setHardBreak().run()}
+          >
+            <IconBaselineDensityLarge />
+          </ButtonBase>
+          <ButtonBase
+            onClick={() => editor.chain().focus().undo().run()}
+            disabled={!editor.can().chain().focus().undo().run()}
+          >
+            <IconArrowBackUp />
+          </ButtonBase>
+          <ButtonBase
+            onClick={() => editor.chain().focus().redo().run()}
+            disabled={!editor.can().chain().focus().redo().run()}
+          >
+            <IconArrowForwardUp />
+          </ButtonBase>
+          <ButtonBase
+            onClick={() => editor.chain().focus().setColor("#958DF1").run()}
+            isActive={editor.isActive("textStyle", { color: "#958DF1" })}
+          >
+            <IconAccessible />
+          </ButtonBase>
+          <ButtonBase onClick={addImage}>
+            <IconPhotoScan />
+          </ButtonBase>
 
-        <ButtonBase id="add" onClick={addYoutubeVideo}>
-          <IconPhotoPlus />
-        </ButtonBase>
+          <ButtonBase id="add" onClick={addYoutubeVideo}>
+            <IconPhotoPlus />
+          </ButtonBase>
 
-        <div className="hidden max-md:flex justify-between space-x-2">
-          <div>
-            <ButtonBase id="add" onClick={addYoutubeVideo}>
-              <IconBrandYoutubeFilled />
-            </ButtonBase>
-          </div>
-          <div>
-            <input
-              id="width"
-              type="number"
-              min="320"
-              max="1024"
-              placeholder="width"
-              value={width}
-              onChange={(event) => setWidth(event.target.value)}
-              className="w-24 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-            />
-          </div>
-
-          <div>
-            <input
-              id="height"
-              type="number"
-              min="180"
-              max="720"
-              placeholder="height"
-              value={height}
-              onChange={(event) => setHeight(event.target.value)}
-              className="w-24 px-3 py-2 ml-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-            />
-          </div>
-        </div>
-
-        <div className="bg-gray-700 max-md:hidden flex w-full items-center p-2 rounded-lg justify-center">
-          <p className="text-white mr-4 text-lg text-bold">
-            Youtube Integration Section
-          </p>
-          <div className="flex items-center space-x-4">
+          <div className="hidden max-md:flex justify-between space-x-2">
             <div>
               <ButtonBase id="add" onClick={addYoutubeVideo}>
                 <IconBrandYoutubeFilled />
@@ -365,6 +338,9 @@ const MenuBar = () => {
                 onChange={(event) => setWidth(event.target.value)}
                 className="w-24 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
               />
+            </div>
+
+            <div>
               <input
                 id="height"
                 type="number"
@@ -377,18 +353,53 @@ const MenuBar = () => {
               />
             </div>
           </div>
-        </div>
 
-        <div className="flex flex-row justify-between w-full">
-          <div>
-            <ButtonBase id="add" onClick={clearContent}>
-              Clear
-            </ButtonBase>
+          <div className="bg-gray-700 max-md:hidden flex w-full items-center p-2 rounded-lg justify-center">
+            <p className="text-white mr-4 text-lg text-bold">
+              Youtube Integration Section
+            </p>
+            <div className="flex items-center space-x-4">
+              <div>
+                <ButtonBase id="add" onClick={addYoutubeVideo}>
+                  <IconBrandYoutubeFilled />
+                </ButtonBase>
+              </div>
+              <div>
+                <input
+                  id="width"
+                  type="number"
+                  min="320"
+                  max="1024"
+                  placeholder="width"
+                  value={width}
+                  onChange={(event) => setWidth(event.target.value)}
+                  className="w-24 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                />
+                <input
+                  id="height"
+                  type="number"
+                  min="180"
+                  max="720"
+                  placeholder="height"
+                  value={height}
+                  onChange={(event) => setHeight(event.target.value)}
+                  className="w-24 px-3 py-2 ml-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                />
+              </div>
+            </div>
           </div>
-          <div>
-            <ButtonBase id="add" onClick={handleSubmit}>
-              Submit
-            </ButtonBase>
+
+          <div className="flex flex-row justify-between w-full">
+            <div>
+              <ButtonBase id="add" onClick={clearContent}>
+                Clear
+              </ButtonBase>
+            </div>
+            <div>
+              <ButtonBase id="add" onClick={handleSubmit}>
+                Submit
+              </ButtonBase>
+            </div>
           </div>
         </div>
       </div>
@@ -400,7 +411,7 @@ const MenuBar = () => {
           textcol={toastData.textcol}
         />
       )}
-    </div>
+    </>
   );
 };
 
