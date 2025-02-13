@@ -152,6 +152,7 @@ const DetailedBlogComp = ({ slug }) => {
       setIsToast(true);
       setIsBookmark((prev) => !prev);
     } catch (error) {
+      console.log(error, "error during bookmarking");
       setToastData({
         message: "Error occurred, please try again later!",
         textcol: "text-red-500",

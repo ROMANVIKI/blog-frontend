@@ -118,6 +118,27 @@ const MenuBar = () => {
     }
   }, [editor]);
 
+  const uploadImage = useCallback(() => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+
+    input.click();
+
+    input.onchange = (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const dataURL = e.target.result;
+
+          editor.chain().focus().setImage({ src: dataURL }).run();
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+  }, [editor]);
+
   const clearContent = () => {
     editor?.commands.clearContent();
   };
@@ -317,7 +338,7 @@ const MenuBar = () => {
             <IconPhotoScan />
           </ButtonBase>
 
-          <ButtonBase id="add" onClick={addImage}>
+          <ButtonBase id="add" onClick={uploadImage}>
             <IconPhotoPlus />
           </ButtonBase>
 
