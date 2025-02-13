@@ -1,2 +1,5 @@
 node_modules
 .next
+
+NEXT_PUBLIC_API_URL=https://vblog-gbkd.onrender.com/api/
+

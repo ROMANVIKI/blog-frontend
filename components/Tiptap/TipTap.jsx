@@ -317,7 +317,7 @@ const MenuBar = () => {
             <IconPhotoScan />
           </ButtonBase>
 
-          <ButtonBase id="add" onClick={addYoutubeVideo}>
+          <ButtonBase id="add" onClick={addImage}>
             <IconPhotoPlus />
           </ButtonBase>
 

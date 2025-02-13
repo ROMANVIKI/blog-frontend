@@ -1,35 +1,45 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
-import axios from "../utils/axios";
+// components/useFetchUser.js
+"use client"; // Add this if not already present
 
-export const useFetchUser = () => {
+import { useState, useEffect } from "react";
+
+const useFetchUser = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const token = localStorage.getItem("accessToken");
+  const [token, setToken] = useState(null); // <--- Add this line
 
-  const fetchUser = useCallback(async () => {
+  useEffect(() => {
+    // Access localStorage ONLY in useEffect (client-side)
+    const storedToken = localStorage.getItem("accessToken");
+    setToken(storedToken);
+  }, []);
+
+  const fetchUser = async () => {
     try {
-      const response = await axios.get("user/", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
+      const response = await axios.get("/user/", {
+        headers: { Authorization: `Bearer ${token}` },
       });
       setUser(response.data);
-      localStorage.setItem("userId", response.data.id);
-      setError(null);
     } catch (err) {
-      setError(err.response?.data?.detail || err.message);
+      setError(err.message);
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
   useEffect(() => {
     if (token) {
       fetchUser();
     }
-    return null;
-  }, [fetchUser]);
+  }, [token]);
 
-  return useMemo(() => ({ user, loading, error }), [user, loading, error]);
+  return { user, loading, error };
 };
+
+export default useFetchUser;
