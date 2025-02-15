@@ -26,6 +26,7 @@ import axios from "../../utils/axios";
 // import axios from "axios";
 import Toast from "../../components/ui/Toast";
 import { useRouter } from "next/navigation";
+import slugify from "slugify";
 
 import {
   IconH1,
@@ -149,6 +150,7 @@ const MenuBar = () => {
         "create-blog/",
         {
           title: blogData.title,
+          slug: blogData.slug,
           content: blogData.content,
           author: blogData.author,
         },
@@ -186,10 +188,17 @@ const MenuBar = () => {
     // Remove the h1 tag from the content
     const contentWithoutTitle = content.replace(/<h1>.*?<\/h1>/, "").trim();
 
+    // Generate the sluf from the title
+    const slug = slugify(title, {
+      lower: true,
+      strict: true,
+    });
+
     // Prepare the data to send to backend
 
     const blogData = {
       title: title,
+      slug: slug,
       author: 1,
       content: content,
     };
