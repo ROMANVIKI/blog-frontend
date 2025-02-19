@@ -9,6 +9,7 @@ import {
   MapPin,
   Star,
 } from "lucide-react";
+import Newsletterform from "./NewsletterForm";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -170,19 +171,7 @@ const Footer = () => {
           <p className="text-sm mb-4">
             Subscribe to receive transmissions from digital space.
           </p>
-          <form className="space-y-2">
-            <input
-              type="email"
-              placeholder="Your email coordinates"
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-800 rounded focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
-            />
-            <button
-              type="submit"
-              className="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded hover:from-purple-700 hover:to-blue-700 transition-all duration-300"
-            >
-              Launch Subscription
-            </button>
-          </form>
+          <Newsletterform />
         </div>
       </div>
 

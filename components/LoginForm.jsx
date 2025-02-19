@@ -47,6 +47,7 @@ const LoginForm = () => {
                     loggedUserName: values.username,
                   }));
                   setSubmitting(false);
+                  router.refresh()
                   router.push("/blogs");
                 })
                 .catch((error) => {
