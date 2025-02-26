@@ -3,9 +3,13 @@ import React from "react";
 import BackgroundLinesDemo from "../components/BackgroundLinesDemo";
 import FloatingNavDemo from "../components/FloatingNavDemo";
 import Footer from "../components/Footer";
-import FeaturesSectionDemo from "../components/FeaturesSectionDemo";
+import { lazy } from "react";
 import Link from "next/link";
 import { useAppState } from "../context/StateContext"; // Import the custom hook
+
+const FeaturesSectionDemo = lazy(
+  () => import("../components/FeaturesSectionDemo"),
+);
 
 const Home = () => {
   const { state } = useAppState();
@@ -23,7 +27,6 @@ const Home = () => {
       </div>
       <Footer />
 
-      {/* Fixed Button at the Bottom */}
       {isLogged ? (
         <Link
           href="/blogs"
