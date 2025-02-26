@@ -297,35 +297,42 @@ const DetailedBlogComp = ({ slug }) => {
       {blogData ? (
         <div className="bg-white shadow-lg border rounded-lg overflow-hidden">
           <div className="p-6 border-b">
-            <div className="flex items-center space-x-4 text-gray-600">
-              <Image
-                width={50}
-                height={50}
-                src={blogData.author_avatar || AnonymousUserImg}
-                alt="author profile picture"
-                className="rounded-full"
-              />
-              <p className="text-lg">
-                <span className="text-gray-800 font-large">
-                  {blogData.author_name}
-                </span>
-              </p>
-              <Calendar className="w-5 h-5" />
-              <p className="text-lg">
-                <span className="text-gray-800 font-large">
-                  {blogData.created_at
-                    ? new Date(blogData.created_at).toLocaleDateString()
-                    : "N/A"}
-                </span>
-              </p>
-              <div>
+            <div className="flex items-center space-x-4 max-sm:space-x-2 text-gray-600">
+              <div className="max-sm:flex-auto">
+                <Image
+                  width={50}
+                  height={50}
+                  src={blogData.author_avatar || AnonymousUserImg}
+                  alt="author profile picture"
+                  className="rounded-full"
+                />
+              </div>
+              <div className="max-sm:flex-auto">
+                <p className="text-lg max-sm:text-md">
+                  <span className="text-gray-800 font-large">
+                    {blogData.author_name}
+                  </span>
+                </p>
+              </div>
+
+              <Calendar className="w-5 h-5 max-sm:flex-auto" />
+              <div className="max-sm:flex-auto">
+                <p className="text-lg max-sm:text-md">
+                  <span className="text-gray-800 font-large">
+                    {blogData.created_at
+                      ? new Date(blogData.created_at).toLocaleDateString()
+                      : "N/A"}
+                  </span>
+                </p>
+              </div>
+              <div className="max-sm:flex-auto">
                 <Share2
                   className="cursor-pointer"
                   disabled={!token}
                   onClick={copyUrl}
                 />
               </div>
-              <div>
+              <div className="max-sm:flex-auto flex-end">
                 <CircleArrowLeft
                   className="cursor-pointer"
                   disabled={!token}

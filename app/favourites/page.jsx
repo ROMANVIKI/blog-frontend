@@ -25,7 +25,6 @@ const Favourites = () => {
     textcol: "",
   });
 
-  // Authentication check effect
   useEffect(() => {
     if (!isInitialized && state.AccessToken !== undefined) {
       setIsInitialized(true);
@@ -35,7 +34,6 @@ const Favourites = () => {
     }
   }, [state.AccessToken, isInitialized, router]);
 
-  // Data fetching effect
   useEffect(() => {
     const fetchSavedBlogs = async () => {
       if (!state.AccessToken) return;
@@ -71,7 +69,6 @@ const Favourites = () => {
         },
       });
 
-      // Optimistically update UI
       setSavedBlogData((prev) => prev.filter((blog) => blog.id !== blogId));
       setToastData({
         message: "Blog deleted successfully!!",
@@ -87,7 +84,6 @@ const Favourites = () => {
     }
   };
 
-  // Early return while checking authentication
   if (!isInitialized) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-4">
@@ -97,7 +93,6 @@ const Favourites = () => {
     );
   }
 
-  // Loading state
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-4">
@@ -107,7 +102,6 @@ const Favourites = () => {
     );
   }
 
-  // Empty state
   if (savedBlogData.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-4">
@@ -124,7 +118,6 @@ const Favourites = () => {
     );
   }
 
-  // Main content
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <div className="flex items-center justify-between mb-6">
