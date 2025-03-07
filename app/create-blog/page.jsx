@@ -8,10 +8,16 @@ const CreateBlog = () => {
   const router = useRouter();
   const { state } = useAppState();
   const token = state.AccessToken;
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  if (!token) {
-    router.push("/login");
-  }
+  useEffect(() => {
+    if (!isInitialized && state.AccessToken !== undefined) {
+      setIsInitialized(true);
+      if (!state.AccessToken) {
+        router.push("/login");
+      }
+    }
+  }, [state.AccessToken, isInitialized, router]);
 
   return <TipTap />;
 };
