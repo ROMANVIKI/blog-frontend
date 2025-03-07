@@ -21,6 +21,10 @@ import css from "highlight.js/lib/languages/css";
 import js from "highlight.js/lib/languages/javascript";
 import ts from "highlight.js/lib/languages/typescript";
 import html from "highlight.js/lib/languages/xml";
+import python from "highlight.js/lib/languages/python";
+import jsx from "highlight.js/lib/languages/javascript"; // JSX (React)
+import json from "highlight.js/lib/languages/json";
+import bash from "highlight.js/lib/languages/bash";
 import { all, createLowlight } from "lowlight";
 import axios from "../../utils/axios";
 // import axios from "axios";
@@ -54,6 +58,10 @@ import {
 
 const lowlight = createLowlight(all);
 
+lowlight.register("python", python);
+lowlight.register("jsx", jsx);
+lowlight.register("json", json);
+lowlight.register("bash", bash);
 lowlight.register("html", html);
 lowlight.register("css", css);
 lowlight.register("js", js);
@@ -206,7 +214,9 @@ const MenuBar = () => {
   }, [editor]);
 
   const addCodeBlock = () => {
-    const language = prompt("Enter language (e.g., python, jsx, json, bash):");
+    const language = prompt(
+      "Enter language (e.g., python, jsx, json, bash, ts, js):",
+    );
 
     if (language) {
       editor.chain().focus().setCodeBlock({ language }).run();
