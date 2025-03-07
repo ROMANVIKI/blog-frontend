@@ -205,6 +205,14 @@ const MenuBar = () => {
     submitData({ blogData });
   }, [editor]);
 
+  const addCodeBlock = () => {
+    const language = prompt("Enter language (e.g., python, jsx, json, bash):");
+
+    if (language) {
+      editor.chain().focus().setCodeBlock({ language }).run();
+    }
+  };
+
   return (
     <>
       <div className="bg-black bg-opacity-90 backdrop-blur-sm shadow-lg rounded-lg p-4 mb-4 sticky top-0 z-10 border border-gray-100">
@@ -267,7 +275,7 @@ const MenuBar = () => {
             <IconPilcrowRight />
           </ButtonBase>
           <ButtonBase
-            onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+            onClick={addCodeBlock}
             className={editor.isActive("codeBlock") ? "is-active" : ""}
           >
             <IconCodeDots />
