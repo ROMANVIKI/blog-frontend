@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import TipTap from "../../components/Tiptap/TipTap";
 import { useAppState } from "../../context/StateContext";
 
