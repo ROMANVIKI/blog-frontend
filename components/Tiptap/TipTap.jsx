@@ -198,7 +198,6 @@ const MenuBar = () => {
 
     const blogData = {
       title: title,
-      slug: slug,
       author: 1,
       content: content,
     };

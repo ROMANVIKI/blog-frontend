@@ -37,7 +37,6 @@ const BlogViewer = React.memo(() => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortType, setSortType] = useState("newest");
 
-  // Fetch blogs from API
   const fetchBlogs = useCallback(async () => {
     try {
       const response = await axios.get("blogs/");
@@ -53,7 +52,6 @@ const BlogViewer = React.memo(() => {
     fetchBlogs();
   }, [fetchBlogs]);
 
-  // Filtering blogs based on search query
   const filteredData = useMemo(() => {
     return blogs.filter(
       (item) =>

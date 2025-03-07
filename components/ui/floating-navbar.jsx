@@ -20,6 +20,7 @@ import {
   IconDirectionsFilled,
   IconLogout,
 } from "@tabler/icons-react";
+import Toast from "../ui/Toast";
 
 export const FloatingNav = ({ navItems, className }) => {
   const { state, setState } = useAppState();
